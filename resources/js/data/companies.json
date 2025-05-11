@@ -1,0 +1,241 @@
+
+[
+  {
+    "id": "google",
+    "name": "Google",
+    "logo": "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200&q=80",
+    "industry": "Technology",
+    "location": "Mountain View, CA",
+    "size": "100,000+ employees",
+    "founded": "1998",
+    "redFlagCount": 3,
+    "greenFlagCount": 7,
+    "reviewCount": 156,
+    "flags": [
+      { "type": "green", "text": "Modern technology stack", "votes": 122, "percentage": 78 },
+      { "type": "green", "text": "Good work-life balance", "votes": 98, "percentage": 63 },
+      { "type": "green", "text": "Excellent benefits", "votes": 145, "percentage": 93 },
+      { "type": "green", "text": "Career growth opportunities", "votes": 88, "percentage": 56 },
+      { "type": "green", "text": "Competitive compensation", "votes": 134, "percentage": 86 },
+      { "type": "green", "text": "Flexible work arrangements", "votes": 102, "percentage": 65 },
+      { "type": "green", "text": "Inclusive workplace", "votes": 112, "percentage": 72 },
+      { "type": "red", "text": "Excessive meetings", "votes": 67, "percentage": 43 },
+      { "type": "red", "text": "Slow decision making", "votes": 89, "percentage": 57 },
+      { "type": "red", "text": "Political environment", "votes": 54, "percentage": 35 }
+    ]
+  },
+  {
+    "id": "microsoft",
+    "name": "Microsoft",
+    "logo": "https://images.unsplash.com/photo-1577375729152-4c8b5fcda381?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200&q=80",
+    "industry": "Technology",
+    "location": "Redmond, WA",
+    "size": "150,000+ employees",
+    "founded": "1975",
+    "redFlagCount": 2,
+    "greenFlagCount": 6,
+    "reviewCount": 134,
+    "flags": [
+      { "type": "green", "text": "Strong benefits package", "votes": 115, "percentage": 86 },
+      { "type": "green", "text": "Good work-life balance", "votes": 92, "percentage": 69 },
+      { "type": "green", "text": "Career advancement", "votes": 88, "percentage": 66 },
+      { "type": "green", "text": "Learning opportunities", "votes": 105, "percentage": 78 },
+      { "type": "green", "text": "Remote work options", "votes": 98, "percentage": 73 },
+      { "type": "green", "text": "Inclusive environment", "votes": 76, "percentage": 57 },
+      { "type": "red", "text": "Complex organizational structure", "votes": 64, "percentage": 48 },
+      { "type": "red", "text": "Slow product cycles", "votes": 57, "percentage": 43 }
+    ]
+  },
+  {
+    "id": "amazon",
+    "name": "Amazon",
+    "logo": "https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200&q=80",
+    "industry": "Technology",
+    "location": "Seattle, WA",
+    "size": "1,000,000+ employees",
+    "founded": "1994",
+    "redFlagCount": 5,
+    "greenFlagCount": 4,
+    "reviewCount": 189,
+    "flags": [
+      { "type": "green", "text": "High compensation", "votes": 142, "percentage": 75 },
+      { "type": "green", "text": "Career growth", "votes": 112, "percentage": 59 },
+      { "type": "green", "text": "Challenging work", "votes": 136, "percentage": 72 },
+      { "type": "green", "text": "Learning opportunities", "votes": 124, "percentage": 66 },
+      { "type": "red", "text": "Poor work-life balance", "votes": 156, "percentage": 83 },
+      { "type": "red", "text": "High pressure environment", "votes": 143, "percentage": 76 },
+      { "type": "red", "text": "Unrealistic expectations", "votes": 128, "percentage": 68 },
+      { "type": "red", "text": "Inconsistent management", "votes": 115, "percentage": 61 },
+      { "type": "red", "text": "High turnover", "votes": 132, "percentage": 70 }
+    ]
+  },
+  {
+    "id": "facebook",
+    "name": "Meta (Facebook)",
+    "logo": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200&q=80",
+    "industry": "Technology",
+    "location": "Menlo Park, CA",
+    "size": "50,000+ employees",
+    "founded": "2004",
+    "redFlagCount": 4,
+    "greenFlagCount": 5,
+    "reviewCount": 126,
+    "flags": [
+      { "type": "green", "text": "Excellent compensation", "votes": 112, "percentage": 89 },
+      { "type": "green", "text": "Great perks", "votes": 106, "percentage": 84 },
+      { "type": "green", "text": "Innovative projects", "votes": 97, "percentage": 77 },
+      { "type": "green", "text": "Strong engineering culture", "votes": 92, "percentage": 73 },
+      { "type": "green", "text": "Flexible work arrangements", "votes": 84, "percentage": 67 },
+      { "type": "red", "text": "Work-life balance issues", "votes": 78, "percentage": 62 },
+      { "type": "red", "text": "High performance pressure", "votes": 86, "percentage": 68 },
+      { "type": "red", "text": "Restructuring concerns", "votes": 74, "percentage": 59 },
+      { "type": "red", "text": "Rapidly changing priorities", "votes": 62, "percentage": 49 }
+    ]
+  },
+  {
+    "id": "apple",
+    "name": "Apple",
+    "logo": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200&q=80",
+    "industry": "Technology",
+    "location": "Cupertino, CA",
+    "size": "150,000+ employees",
+    "founded": "1976",
+    "redFlagCount": 2,
+    "greenFlagCount": 7,
+    "reviewCount": 142,
+    "flags": [
+      { "type": "green", "text": "Prestigious brand", "votes": 134, "percentage": 94 },
+      { "type": "green", "text": "Quality-focused culture", "votes": 127, "percentage": 89 },
+      { "type": "green", "text": "Great benefits", "votes": 116, "percentage": 82 },
+      { "type": "green", "text": "Good compensation", "votes": 121, "percentage": 85 },
+      { "type": "green", "text": "Innovative work", "votes": 108, "percentage": 76 },
+      { "type": "green", "text": "Strong team culture", "votes": 98, "percentage": 69 },
+      { "type": "green", "text": "Good work environment", "votes": 104, "percentage": 73 },
+      { "type": "red", "text": "Secretive culture", "votes": 88, "percentage": 62 },
+      { "type": "red", "text": "High expectations", "votes": 92, "percentage": 65 }
+    ]
+  },
+  {
+    "id": "company-a",
+    "name": "Company A",
+    "logo": "https://placehold.co/200",
+    "industry": "Finance",
+    "location": "New York, NY",
+    "size": "10,000+ employees",
+    "founded": "1985",
+    "redFlagCount": 4,
+    "greenFlagCount": 2,
+    "reviewCount": 87,
+    "flags": [
+      { "type": "green", "text": "Good compensation", "votes": 74, "percentage": 85 },
+      { "type": "green", "text": "Career advancement", "votes": 68, "percentage": 78 },
+      { "type": "red", "text": "Poor work-life balance", "votes": 76, "percentage": 87 },
+      { "type": "red", "text": "Micromanagement", "votes": 65, "percentage": 75 },
+      { "type": "red", "text": "Outdated technology", "votes": 58, "percentage": 67 },
+      { "type": "red", "text": "High stress environment", "votes": 71, "percentage": 82 }
+    ]
+  },
+  {
+    "id": "company-b",
+    "name": "Company B",
+    "logo": "https://placehold.co/200",
+    "industry": "Healthcare",
+    "location": "Boston, MA",
+    "size": "15,000+ employees",
+    "founded": "1992",
+    "redFlagCount": 5,
+    "greenFlagCount": 1,
+    "reviewCount": 93,
+    "flags": [
+      { "type": "green", "text": "Meaningful work", "votes": 82, "percentage": 88 },
+      { "type": "red", "text": "Low compensation", "votes": 77, "percentage": 83 },
+      { "type": "red", "text": "Bad management", "votes": 79, "percentage": 85 },
+      { "type": "red", "text": "Poor communication", "votes": 72, "percentage": 77 },
+      { "type": "red", "text": "Bureaucratic processes", "votes": 68, "percentage": 73 },
+      { "type": "red", "text": "Limited growth opportunities", "votes": 64, "percentage": 69 }
+    ]
+  },
+  {
+    "id": "company-c",
+    "name": "Company C",
+    "logo": "https://placehold.co/200",
+    "industry": "Retail",
+    "location": "Chicago, IL",
+    "size": "50,000+ employees",
+    "founded": "1975",
+    "redFlagCount": 3,
+    "greenFlagCount": 3,
+    "reviewCount": 102,
+    "flags": [
+      { "type": "green", "text": "Good benefits", "votes": 84, "percentage": 82 },
+      { "type": "green", "text": "Flexible scheduling", "votes": 78, "percentage": 76 },
+      { "type": "green", "text": "Team atmosphere", "votes": 72, "percentage": 71 },
+      { "type": "red", "text": "Low compensation", "votes": 82, "percentage": 80 },
+      { "type": "red", "text": "Limited advancement", "votes": 74, "percentage": 73 },
+      { "type": "red", "text": "Inconsistent management", "votes": 68, "percentage": 67 }
+    ]
+  },
+  {
+    "id": "company-x",
+    "name": "Company X",
+    "logo": "https://placehold.co/200",
+    "industry": "Software",
+    "location": "Austin, TX",
+    "size": "500+ employees",
+    "founded": "2010",
+    "redFlagCount": 1,
+    "greenFlagCount": 6,
+    "reviewCount": 64,
+    "flags": [
+      { "type": "green", "text": "Modern tech stack", "votes": 58, "percentage": 91 },
+      { "type": "green", "text": "Remote-first culture", "votes": 55, "percentage": 86 },
+      { "type": "green", "text": "Strong leadership", "votes": 52, "percentage": 81 },
+      { "type": "green", "text": "Good compensation", "votes": 50, "percentage": 78 },
+      { "type": "green", "text": "Work-life balance", "votes": 48, "percentage": 75 },
+      { "type": "green", "text": "Career growth", "votes": 46, "percentage": 72 },
+      { "type": "red", "text": "Fast-paced environment", "votes": 32, "percentage": 50 }
+    ]
+  },
+  {
+    "id": "company-y",
+    "name": "Company Y",
+    "logo": "https://placehold.co/200",
+    "industry": "Marketing",
+    "location": "San Francisco, CA",
+    "size": "200+ employees",
+    "founded": "2015",
+    "redFlagCount": 2,
+    "greenFlagCount": 5,
+    "reviewCount": 48,
+    "flags": [
+      { "type": "green", "text": "Creative freedom", "votes": 42, "percentage": 88 },
+      { "type": "green", "text": "Diverse workforce", "votes": 39, "percentage": 81 },
+      { "type": "green", "text": "Modern office", "votes": 37, "percentage": 77 },
+      { "type": "green", "text": "Flexible hours", "votes": 36, "percentage": 75 },
+      { "type": "green", "text": "Collaborative culture", "votes": 34, "percentage": 71 },
+      { "type": "red", "text": "Client deadline pressure", "votes": 28, "percentage": 58 },
+      { "type": "red", "text": "Growing pains", "votes": 25, "percentage": 52 }
+    ]
+  },
+  {
+    "id": "company-z",
+    "name": "Company Z",
+    "logo": "https://placehold.co/200",
+    "industry": "Education",
+    "location": "Remote",
+    "size": "100+ employees",
+    "founded": "2018",
+    "redFlagCount": 0,
+    "greenFlagCount": 7,
+    "reviewCount": 42,
+    "flags": [
+      { "type": "green", "text": "Mission-driven", "votes": 40, "percentage": 95 },
+      { "type": "green", "text": "Remote-first", "votes": 39, "percentage": 93 },
+      { "type": "green", "text": "Unlimited PTO", "votes": 37, "percentage": 88 },
+      { "type": "green", "text": "Strong leadership", "votes": 35, "percentage": 83 },
+      { "type": "green", "text": "Learning culture", "votes": 33, "percentage": 79 },
+      { "type": "green", "text": "Work-life balance", "votes": 32, "percentage": 76 },
+      { "type": "green", "text": "Transparent communication", "votes": 30, "percentage": 71 }
+    ]
+  }
+]

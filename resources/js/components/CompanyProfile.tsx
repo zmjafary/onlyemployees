@@ -1,0 +1,288 @@
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { getCompanyById } from "@/services/companyService";
+import { CompanyType } from "@/types/company";
+import { motion } from "framer-motion";
+import { Building, Calendar, ExternalLink, Flag, MapPin, MessageSquare, Users, Send } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from '@inertiajs/react';
+
+export function CompanyProfile({ companyId = "google" }: { companyId?: string }) {
+  const [company, setCompany] = useState<CompanyType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchCompany = () => {
+      try {
+        const companyData = getCompanyById(companyId);
+        if (companyData) {
+          setCompany(companyData);
+        } else {
+          toast({
+            title: "Company not found",
+            description: `We couldn't find information for company ID: ${companyId}`,
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+        toast({
+          title: "Error loading company",
+          description: "There was a problem loading the company information.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompany();
+  }, [companyId, toast]);
+
+  if (loading) {
+    return (
+      <div className="py-20 text-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-32 w-32 bg-muted rounded-lg mb-4"></div>
+          <div className="h-8 w-60 bg-muted rounded mb-2"></div>
+          <div className="h-4 w-96 bg-muted rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!company) {
+    return (
+      <div className="py-20 text-center">
+        <h2 className="text-2xl font-bold mb-4">Company Not Found</h2>
+        <p className="mb-6 text-muted-foreground">We couldn't find information for the requested company.</p>
+        <Button asChild>
+          <Link href="/explore">Explore Companies</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  const redFlags = company.flags.filter((flag) => flag.type === "red");
+  const greenFlags = company.flags.filter((flag) => flag.type === "green");
+
+  return (
+    <div className="py-8 md:py-12">
+      <div className="container-custom">
+        {/* Company Overview */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 md:mb-12"
+        >
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="h-20 w-20 rounded-lg bg-white shadow-md flex items-center justify-center overflow-hidden">
+              <img 
+                src={company.logo} 
+                alt={`${company.name} logo`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="flex-1">
+              <h1 className="font-poppins font-bold text-2xl sm:text-3xl md:text-4xl mb-2">
+                {company.name}
+              </h1>
+              <div className="flex flex-wrap items-center gap-3 text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Building size={16} className="text-primary" />
+                  <span className="text-sm">{company.industry}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MapPin size={16} className="text-primary" />
+                  <span className="text-sm">{company.location}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Users size={16} className="text-primary" />
+                  <span className="text-sm">{company.size}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar size={16} className="text-primary" />
+                  <span className="text-sm">Founded {company.founded}</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0 w-full md:w-auto">
+              <a 
+                href={`https://linkedin.com/company/${company.id}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1.5"
+              >
+                <ExternalLink size={16} />
+                View on LinkedIn
+              </a>
+              <Button asChild>
+                <Link href={`/review?company=${company.id}`}>
+                  <MessageSquare size={16} className="mr-2" /> Submit Review
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Review Stats Overview */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Review Count</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <Users className="text-primary" />
+                <span className="text-3xl font-bold">{company.reviewCount}</span>
+                <span className="text-muted-foreground">employees</span>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Green Flags</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <Flag className="text-success" />
+                <span className="text-3xl font-bold">{company.greenFlagCount}</span>
+                <span className="text-muted-foreground">positives</span>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="sm:col-span-2 md:col-span-1">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Red Flags</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <Flag className="text-warning" />
+                <span className="text-3xl font-bold">{company.redFlagCount}</span>
+                <span className="text-muted-foreground">concerns</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Green Flags */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-8 md:mb-12"
+        >
+          <h2 className="font-poppins font-bold text-xl md:text-2xl lg:text-3xl mb-4 md:mb-6 flex items-center gap-2">
+            <Flag className="text-success" />
+            Green Flags
+            <Badge variant="outline" className="ml-2 font-normal">
+              {greenFlags.length}
+            </Badge>
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {greenFlags.map((flag, index) => (
+              <motion.div
+                key={`green-${index}`}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="bg-success/5 border border-success/20 rounded-lg p-4"
+              >
+                <div className="flex justify-between mb-2">
+                  <div className="font-medium flex items-center gap-1.5">
+                    <Flag size={16} className="text-success" />
+                    {flag.text}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {flag.votes} votes
+                  </div>
+                </div>
+                <div className="w-full bg-success/10 rounded-full h-2">
+                  <div 
+                    className="bg-success h-2 rounded-full" 
+                    style={{ width: `${flag.percentage}%` }}
+                  ></div>
+                </div>
+                <div className="mt-1 text-xs text-success">
+                  {flag.percentage}% of employees agree
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Red Flags */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <h2 className="font-poppins font-bold text-xl md:text-2xl lg:text-3xl mb-4 md:mb-6 flex items-center gap-2">
+            <Flag className="text-warning" />
+            Red Flags
+            <Badge variant="outline" className="ml-2 font-normal">
+              {redFlags.length}
+            </Badge>
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {redFlags.map((flag, index) => (
+              <motion.div
+                key={`red-${index}`}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="bg-warning/5 border border-warning/20 rounded-lg p-4"
+              >
+                <div className="flex justify-between mb-2">
+                  <div className="font-medium flex items-center gap-1.5">
+                    <Flag size={16} className="text-warning" />
+                    {flag.text}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {flag.votes} votes
+                  </div>
+                </div>
+                <div className="w-full bg-warning/10 rounded-full h-2">
+                  <div 
+                    className="bg-warning h-2 rounded-full" 
+                    style={{ width: `${flag.percentage}%` }}
+                  ></div>
+                </div>
+                <div className="mt-1 text-xs text-warning">
+                  {flag.percentage}% of employees agree
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* CTA Section */}
+        <div className="mt-12 md:mt-16 bg-muted/30 rounded-lg p-6 md:p-8 text-center">
+          <h3 className="font-poppins font-bold text-lg md:text-xl mb-4">
+            Do you work at {company.name}?
+          </h3>
+          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+            Help others know before they go by sharing your experience.
+            All submissions are 100% anonymous.
+          </p>
+          <Button size={isMobile ? "default" : "lg"} asChild>
+            <Link href={`/review?company=${company.id}`}>
+              <Send size={16} className="mr-1" /> Submit Your Review
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

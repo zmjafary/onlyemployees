@@ -1,0 +1,307 @@
+|-----------------------------|------------------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
+| Topic                       | Question                                                               | Favorable Keywords                                        | Unfavorable Keywords                                      |
+|-----------------------------|------------------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
+| Compensation & Benefits     | Does the company offer competitive salaries?                           | "happy payday GIF", "celebrating paycheck GIF"            | "empty wallet GIF", "disappointed salary GIF"             |
+|                             | Are there any performance-based bonuses?                               | "bonus celebration GIF", "winning bonus GIF"              | "no bonus GIF", "disappointed no bonus GIF"               |
+|                             | Are health and wellness benefits provided?                             | "happy healthcare GIF", "wellness benefits GIF"           | "no healthcare GIF", "no wellness benefits GIF"           |
+|                             | Is there paid parental leave?                                          | "parental leave GIF", "happy parental leave GIF"          | "no parental leave GIF", "disappointed parent GIF"        |
+| Work-Life Balance           | Is there flexibility in work hours?                                    | "flexible hours GIF", "work from home GIF"                | "strict hours GIF", "overworked GIF"                      |
+|                             | Are there sufficient vacation days?                                    | "vacation days GIF", "happy vacation GIF"                 | "no vacation GIF", "disappointed no vacation GIF"         |
+|                             | Can you work remotely if needed?                                       | "remote work GIF", "happy work from home GIF"             | "no remote work GIF", "disappointed no remote work GIF"   |
+| Company Culture             | Is the company culture inclusive?                                      | "inclusive culture GIF", "happy team GIF"                 | "exclusive culture GIF", "not inclusive GIF"              |
+|                             | Are there regular team-building activities?                            | "team building GIF", "fun team activities GIF"            | "no team building GIF", "no activities GIF"               |
+|                             | Does the company value diversity?                                      | "diverse workplace GIF", "happy diversity GIF"            | "no diversity GIF", "disappointed diversity GIF"          |
+| Management & Leadership     | Is the management supportive?                                          | "supportive boss GIF", "great manager GIF"                | "unsupportive boss GIF", "bad manager GIF"                |
+|                             | Does management communicate effectively?                               | "effective communication GIF", "clear communication GIF"  | "poor communication GIF", "unclear communication GIF"     |
+|                             | Are employee ideas valued and implemented?                             | "idea implementation GIF", "valued ideas GIF"             | "ignored ideas GIF", "no idea implementation GIF"         |
+| Career Development          | Are there opportunities for career growth?                             | "career growth GIF", "promotion GIF"                      | "no career growth GIF", "stagnant career GIF"             |
+|                             | Is there a mentorship program?                                         | "mentorship program GIF", "happy mentor GIF"              | "no mentorship GIF", "disappointed no mentor GIF"         |
+|                             | Does the company provide training and development resources?           | "training resources GIF", "happy training GIF"            | "no training GIF", "disappointed no training GIF"         |
+| Workplace Environment       | Is the workplace safe and healthy?                                     | "safe workplace GIF", "healthy workplace GIF"             | "unsafe workplace GIF", "unhealthy workplace GIF"         |
+|                             | Are the facilities well-maintained?                                    | "clean facilities GIF", "well-maintained workplace GIF"   | "dirty workplace GIF", "poor facilities GIF"              |
+|                             | Is there a significant female percentage in the workplace?             | "female workforce GIF", "diverse team GIF"                | "no female employees GIF", "male-dominated workplace GIF" |
+|                             | Are there separate prayer areas for men and women?                     | "separate prayer area GIF", "accommodating workplace GIF" | "no prayer area GIF", "no accommodations GIF"             |
+|-----------------------------|------------------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
+
+https://swiperjs.com/demos - https://maximelafarie.com/giphy-downloader/
+
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+Topic: Leadership and Management
+1. Leadership Quality
+   - Question: Is the leadership supportive and effective?
+   - Favor Statement: Effective leadership inspires and supports employees.
+   - Favor Description: Supportive and effective leadership boosts employee morale and productivity.
+   - Against Statement: Poor leadership demotivates employees and hinders progress.
+   - Against Description: Ineffective leadership can lead to a toxic work environment and high turnover.
+
+2. Management Support
+   - Question: Are managers supportive and provide mentorship?
+   - Favor Statement: Supportive managers mentor and guide employees.
+   - Favor Description: Employees thrive with managers who offer guidance and support.
+   - Against Statement: Unsupportive managers hinder employee development.
+   - Against Description: Lack of support from managers can stunt career growth and job satisfaction.
+
+Topic: Company Culture and Environment
+3. Company Culture
+   - Question: Is the company culture positive and inclusive?
+   - Favor Statement: Positive and inclusive culture fosters employee well-being.
+   - Favor Description: An inclusive culture enhances collaboration and innovation.
+   - Against Statement: Negative culture breeds dissatisfaction and conflict.
+   - Against Description: A toxic culture can lead to employee disengagement and high turnover.
+
+4. Diversity and Inclusion
+   - Question: Does the company have policies promoting diversity and inclusion?
+   - Favor Statement: Diversity and inclusion policies create a welcoming workplace.
+   - Favor Description: Diverse and inclusive workplaces are more innovative and productive.
+   - Against Statement: Lack of diversity and inclusion leads to discrimination.
+   - Against Description: Discrimination and lack of diversity can harm employee morale and performance.
+
+Topic: Career Development and Opportunities
+5. Opportunities for Growth
+   - Question: Are there clear career advancement opportunities?
+   - Favor Statement: Clear advancement opportunities motivate employees.
+   - Favor Description: Employees are more motivated when they see a clear path for growth.
+   - Against Statement: Lack of advancement opportunities leads to stagnation.
+   - Against Description: Employees may feel stuck and unmotivated without clear growth prospects.
+
+6. Training and Development
+   - Question: Does the company provide access to training and development opportunities?
+   - Favor Statement: Access to training enhances employee skills.
+   - Favor Description: Continuous learning opportunities keep employees engaged and competent.
+   - Against Statement: Lack of training stifles employee growth.
+   - Against Description: Without training, employees may struggle to develop new skills and grow.
+
+Topic: Work-Life Balance and Compensation
+7. Work-Life Balance
+   - Question: Does the company offer flexible work hours or remote work options?
+   - Favor Statement: Flexible work options improve work-life balance.
+   - Favor Description: Employees with flexible work arrangements are often more satisfied and productive.
+   - Against Statement: Lack of flexibility harms work-life balance.
+   - Against Description: Rigid work schedules can lead to burnout and decreased productivity.
+
+8. Compensation
+   - Question: Is the salary competitive?
+   - Favor Statement: Competitive salaries attract and retain talent.
+   - Favor Description: Fair compensation is crucial for employee satisfaction and retention.
+   - Against Statement: Low salaries lead to dissatisfaction.
+   - Against Description: Employees may feel undervalued and seek opportunities elsewhere if salaries are not competitive.
+
+9. Benefits
+   - Question: Does the company offer health insurance, retirement plans, and wellness programs?
+   - Favor Statement: Comprehensive benefits support employee well-being.
+   - Favor Description: Benefits like health insurance and retirement plans are essential for employee satisfaction.
+   - Against Statement: Lack of benefits reduces job attractiveness.
+   - Against Description: Employees may feel unsupported if essential benefits are missing.
+
+Topic: Job Satisfaction and Security
+10. Job Security
+    - Question: Is job security high with low turnover rates?
+    - Favor Statement: High job security ensures employee stability.
+    - Favor Description: Employees feel more secure and committed when job security is high.
+    - Against Statement: Low job security leads to anxiety.
+    - Against Description: Frequent layoffs or high turnover can create a stressful work environment.
+
+11. Job Satisfaction
+    - Question: Are you satisfied and fulfilled with your job?
+    - Favor Statement: Job satisfaction boosts employee morale.
+    - Favor Description: Fulfilled employees are more engaged and productive.
+    - Against Statement: Low job satisfaction leads to disengagement.
+    - Against Description: Unsatisfied employees may be less productive and more likely to leave.
+
+Topic: Workplace Environment
+12. Work Environment
+    - Question: Is the workplace safe, comfortable, and well-equipped?
+    - Favor Statement: A safe and comfortable environment enhances productivity.
+    - Favor Description: Employees perform better in a well-equipped and safe workplace.
+    - Against Statement: Poor work environment affects performance.
+    - Against Description: Uncomfortable or unsafe work conditions can lead to decreased productivity and morale.
+
+13. Technology and Tools
+    - Question: Does the company provide access to modern tools and technology?
+    - Favor Statement: Access to modern tools increases efficiency.
+    - Favor Description: Up-to-date technology helps employees work more effectively.
+    - Against Statement: Outdated tools hinder performance.
+    - Against Description: Lack of modern tools can impede productivity and job satisfaction.
+
+Topic: Feedback and Recognition
+14. Employee Recognition
+    - Question: Are employees regularly acknowledged and rewarded for good work?
+    - Favor Statement: Regular recognition boosts employee morale.
+    - Favor Description: Acknowledging achievements motivates employees to perform better.
+    - Against Statement: Lack of recognition leads to demotivation.
+    - Against Description: Employees may feel undervalued without regular recognition and rewards.
+
+15. Feedback Culture
+    - Question: Do employees receive regular and constructive feedback from supervisors?
+    - Favor Statement: Regular feedback helps employees improve.
+    - Favor Description: Constructive feedback is essential for personal and professional growth.
+    - Against Statement: Lack of feedback stifles improvement.
+    - Against Description: Without feedback, employees may struggle to understand their performance and areas for improvement.
+
+Topic: Collaboration and Communication
+16. Team Collaboration
+    - Question: Does the company encourage teamwork and collaboration?
+    - Favor Statement: Team collaboration enhances creativity and problem-solving.
+    - Favor Description: Working together helps teams achieve better results and innovate.
+    - Against Statement: Lack of collaboration stifles teamwork.
+    - Against Description: Poor collaboration can lead to isolated work and decreased productivity.
+
+17. Communication
+    - Question: Is internal communication transparent and effective?
+    - Favor Statement: Transparent communication builds trust.
+    - Favor Description: Clear and open communication fosters a trusting and informed workplace.
+    - Against Statement: Poor communication breeds confusion.
+    - Against Description: Ineffective communication can lead to misunderstandings and frustration among employees.
+
+Topic: Additional Features
+18. Employee Perks
+    - Question: What perks does the company offer? (List perks)
+    - Favor Statement: Attractive perks enhance job satisfaction.
+    - Favor Description: Perks like gym memberships, snacks, and social events can make the workplace more enjoyable.
+    - Against Statement: Lack of perks can reduce job attractiveness.
+    - Against Description: Without perks, employees may feel less valued and motivated.
+
+19. Workplace Safety
+    - Question: Does the company adhere to health and safety standards?
+    - Favor Statement: Adherence to safety standards protects employees.
+    - Favor Description: A safe workplace prevents accidents and ensures employee well-being.
+    - Against Statement: Poor safety standards endanger employees.
+    - Against Description: Neglecting safety can lead to accidents and harm employee health.
+
+Topic: Inclusivity and Facilities
+20. Female Workforce Percentage
+    - Question: Is there a significant percentage of female employees in the workplace?
+    - Favor Statement: A significant female workforce indicates gender diversity.
+    - Favor Description: Gender diversity in the workplace can lead to varied perspectives and more balanced decision-making.
+    - Against Statement: Lack of female representation indicates gender imbalance.
+    - Against Description: A low percentage of female employees may reflect gender inequality in the workplace.
+
+21. Praying Facilities
+    - Question: Are there separate praying facilities for men and women?
+    - Favor Statement: Separate praying facilities respect religious practices.
+    - Favor Description: Providing separate facilities supports employees religious needs and fosters inclusivity.
+    - Against Statement: Lack of praying facilities can alienate religious employees.
+    - Against Description: Not providing for religious practices can make employees feel unsupported and excluded.
+
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+Category: Leadership and Management
+Topic: Leadership Quality
+1. Question: How does your manager respond when you bring a new idea?
+   - Positive: https://media.giphy.com/media/26uf9QPzzlKPvQGzC/giphy.gif - Congratulating
+   - Negative: https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif - Getting slapped
+
+2. Question: How does leadership handle team mistakes?
+   - Positive: https://media.giphy.com/media/l4FGyO7ht8hzz7P9i/giphy.gif - Supportive
+   - Negative: https://media.giphy.com/media/3o6Zt6ML6BklcajjsA/giphy.gif - Angry reaction
+
+Topic: Management Support
+3. Question: How does your manager react to requests for mentorship?
+   - Positive: https://media.giphy.com/media/l0HlymAlqPh0XGBtm/giphy.gif - Supportive mentorship
+   - Negative: https://media.giphy.com/media/3oEdv3Ul4n90e7N1yE/giphy.gif - Ignoring
+
+Category: Company Culture and Environment
+Topic: Company Culture
+4. Question: How inclusive is your company culture?
+   - Positive: https://media.giphy.com/media/26xBMDc3rGbXrMHh2/giphy.gif - Inclusive and friendly
+   - Negative: https://media.giphy.com/media/L3nWlmUemfwYM/giphy.gif - Exclusive
+
+Topic: Diversity and Inclusion
+5. Question: Does the company actively promote diversity?
+   - Positive: https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif - Diverse workplace
+   - Negative: https://media.giphy.com/media/3og0IEG19E8K2bF48k/giphy.gif - Lack of diversity
+
+Category: Career Development and Opportunities
+Topic: Opportunities for Growth
+6. Question: Are there clear paths for career advancement?
+   - Positive: https://media.giphy.com/media/1wXeL1OTR3T8M0uJbH/giphy.gif - Clear advancement
+   - Negative: https://media.giphy.com/media/26n7bDw7kE3noYAyA/giphy.gif - Stagnation
+
+Topic: Training and Development
+7. Question: Does the company provide training opportunities?
+   - Positive: https://media.giphy.com/media/3oEjHLzm4BCF8zfPyw/giphy.gif - Ongoing training
+   - Negative: https://media.giphy.com/media/l0MYJD5t8DHc25bXK/giphy.gif - No training
+
+Category: Work-Life Balance and Compensation
+Topic: Work-Life Balance
+8. Question: Does the company offer flexible work hours?
+   - Positive: https://media.giphy.com/media/3o7TKTMJQKbO7vtxe0/giphy.gif - Flexible hours
+   - Negative: https://media.giphy.com/media/3o6MbdQy3oi7s33UnW/giphy.gif - Rigid hours
+
+Topic: Compensation
+9. Question: Is the salary competitive?
+   - Positive: https://media.giphy.com/media/xT9KVrA8bQHwGT73r6/giphy.gif - High salary
+   - Negative: https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif - Low salary
+
+Topic: Benefits
+10. Question: Does the company offer comprehensive benefits?
+    - Positive: https://media.giphy.com/media/l0Exk8EUzSLsrErEQ/giphy.gif - Great benefits
+    - Negative: https://media.giphy.com/media/3oz8xSg7dlW9V7OhCw/giphy.gif - No benefits
+
+Category: Job Satisfaction and Security
+Topic: Job Security
+11. Question: Is job security high?
+    - Positive: https://media.giphy.com/media/1BdIPMGNN8w1y/giphy.gif - Secure job
+    - Negative: https://media.giphy.com/media/l3q2JS5hW2FlC/giphy.gif - Insecure job
+
+Topic: Job Satisfaction
+12. Question: Are you satisfied with your job?
+    - Positive: https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif - Job satisfaction
+    - Negative: https://media.giphy.com/media/xT1XGxfSFZIxO/giphy.gif - Dissatisfaction
+
+Category: Workplace Environment
+Topic: Work Environment
+13. Question: Is the workplace safe and comfortable?
+    - Positive: https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif - Safe and comfy
+    - Negative: https://media.giphy.com/media/3o6Mb2lEPinCIVvZSs/giphy.gif - Unsafe environment
+
+Topic: Technology and Tools
+14. Question: Does the company provide modern tools and technology?
+    - Positive: https://media.giphy.com/media/3o7abB06u9bNzA8lu8/giphy.gif - Modern tools
+    - Negative: https://media.giphy.com/media/l0MYwONBGDS7aPGOk/giphy.gif - Outdated tools
+
+Category: Feedback and Recognition
+Topic: Employee Recognition
+15. Question: Are employees regularly acknowledged for good work?
+    - Positive: https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif - Recognition
+    - Negative: https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif - No recognition
+
+Topic: Feedback Culture
+16. Question: Do employees receive regular feedback?
+    - Positive: https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif - Constructive feedback
+    - Negative: https://media.giphy.com/media/xT9KVpBxr6kKvYKJPy/giphy.gif - No feedback
+
+Category: Collaboration and Communication
+Topic: Team Collaboration
+17. Question: Is teamwork encouraged?
+    - Positive: https://media.giphy.com/media/l41m5GYGyAxsW1zvq/giphy.gif - Great teamwork
+    - Negative: https://media.giphy.com/media/3oEdv3Ul4n90e7N1yE/giphy.gif - No teamwork
+
+Topic: Communication
+18. Question: Is communication transparent and effective?
+    - Positive: https://media.giphy.com/media/l3q2SaisWz1VAXiB6/giphy.gif - Effective communication
+    - Negative: https://media.giphy.com/media/3o6Zt3xrjjkD7pBls4/giphy.gif - Poor communication
+
+Category: Inclusivity and Facilities
+Topic: Female Workforce Percentage
+19. Question: Is there a significant percentage of female employees?
+    - Positive: https://media.giphy.com/media/1Bev1qO9v0a3S/giphy.gif - Gender diversity
+    - Negative: https://media.giphy.com/media/l0HlKhrxZCBRU6EIE/giphy.gif - Gender imbalance
+
+Topic: Praying Facilities
+20. Question: Are there separate praying facilities for men and women?
+    - Positive: https://media.giphy.com/media/l0HlN7D2ZogKIz3Es/giphy.gif - Inclusive praying facilities
+    - Negative: https://media.giphy.com/media/xT9KVJBcCl3D5LF8Ni/giphy.gif - Lack of facilities)
+
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+
+DUMP
+    * Users can add / edit companies (approved after)
+    * Flag certain comments,edits and information
+    * Have a contributions section to list flags, updates and donations
+    * Option to donate 
+    * https://cloudcake.github.io/laravel-approval/#/
+    * https://laraveldaily.com/packages
+    * https://elements.envato.com/quizo-questionnaire-multistep-quiz-form-wizard-LFT9DT3

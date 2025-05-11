@@ -1,0 +1,174 @@
+Table user {
+  id integer [primary key]
+  name varchar
+  username varchar
+  email varchar
+  photo text
+  role_id integer
+  created_at timestamp
+}
+
+Table company {
+  id integer [primary key]
+  name varchar
+  display_name varchar
+  photo text
+  address varchar
+  phone varchar
+  email varchar
+}
+
+Table company_user {
+  id integer [primary key]
+  user_id integer
+  company_id integer
+  department_id integer
+  start_date timestamp [note: 'optional']
+  end_date timestamp [note: 'optional']
+  rating integer [note: 'optional']
+  overall_experience varchar [note: 'optional']
+}
+
+Table country {
+  id integer [primary key]
+  name varchar
+}
+
+Table city {
+  id integer [primary key]
+  name varchar
+  country_id integer
+}
+
+Table city_company {
+  id integer [primary key]
+  company_id integer
+  city_id integer
+  is_main boolean
+  status boolean
+}
+
+Table company_role {
+  id integer [primary key]
+  company_id integer
+  role_id integer
+  status boolean
+}
+
+Table company_department {
+  id integer [primary key]
+  company_id integer
+  department_id integer
+  city_id integer
+  status boolean
+}
+
+Table department {
+  id integer [primary key]
+  name varchar
+}
+
+Table role {
+  id integer [primary key]
+  name varchar
+}
+
+Table revision {
+  id integer [primary key]
+  revisionable_id integer
+  revisionable_type varchar
+  column varchar
+  old_version json
+  new_version json
+}
+
+Table survey {
+  id integer [primary key]
+  user_id integer
+  company_id integer
+  city_id integer
+  role_id integer
+  department_id integer
+  is_anonymous boolean
+  is_employed boolean
+  employed_from_date timestamp
+  employed_to_date timestamp [note: 'optional']
+  overall_rating integer [note: 'additional feature']
+  review varchar [note: 'optional']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table survey_question {
+  id integer [primary key]
+  survey_id integer
+  question_id integer
+  answer integer
+  is_yes boolean
+  rating integer [note: 'additional feature']
+  comment varchar [note: 'optional']
+}
+
+Table survey_question_additional_response {
+  id integer [primary key]
+  survey_question_id integer
+  response varchar
+}
+
+Table question {
+  id integer [primary key]
+  question_regular varchar
+  question_meme varchar
+  favour_gif varchar
+  against_gif varchar
+  status boolean
+  topic_id integer
+  needs_additional_responses boolean
+}
+
+Table category {
+  id integer [primary key]
+  name varchar
+}
+
+Table topic {
+  id integer [primary key]
+  name varchar
+  category_id integer
+  description varchar [note: 'optional']
+  favor_statement varchar
+  favor_description varchar
+  against_statement varchar
+  against_description varchar
+  status boolean
+}
+
+Ref: company_user.user_id > user.id
+Ref: company_user.company_id > company.id
+Ref: company_user.department_id > department.id
+
+Ref: city.country_id > country.id
+
+Ref: city_company.company_id > company.id
+Ref: city_company.city_id > city.id
+
+Ref: company_department.company_id > company.id
+Ref: company_department.department_id > department.id
+Ref: company_department.city_id > city.id
+
+Ref: company_role.role_id > role.id
+
+Ref: topic.category_id > category.id
+
+Ref: survey.user_id > user.id
+Ref: survey.company_id > company.id
+Ref: survey.city_id > city.id
+Ref: survey.role_id > role.id
+Ref: survey.department_id > department.id
+
+Ref: survey_question.survey_id > survey.id
+Ref: survey_question.question_id > question.id
+
+Ref: survey_question_additional_response.survey_question_id > survey_question.id
+
+Ref: question.topic_id > topic.id
