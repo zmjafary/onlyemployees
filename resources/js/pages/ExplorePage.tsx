@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -30,18 +29,30 @@ export default function ExplorePage() {
   const [filteredCompanies, setFilteredCompanies] = useState<CompanyType[]>([]);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [isImporting, setIsImporting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     // Fetch companies on component mount
     const fetchCompanies = async () => {
-      const companiesData = getCompanies();
-      setCompanies(companiesData);
-      setFilteredCompanies(companiesData);
+      try {
+        const companiesData = await getCompanies();
+        setCompanies(companiesData);
+        setFilteredCompanies(companiesData);
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+        toast({
+          title: "Error loading companies",
+          description: "There was a problem loading the companies. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
     
     fetchCompanies();
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     // Filter companies based on search criteria
@@ -56,7 +67,9 @@ export default function ExplorePage() {
     
     if (size && size !== "all") {
       results = results.filter(company => {
-        const employeeCount = parseInt(company.size.replace(/,/g, '').split('+')[0]);
+        // Safely access size property
+        const companySize = company.size || '';
+        const employeeCount = parseInt(companySize.replace(/,/g, '').split('+')[0]);
         
         switch(size) {
           case "small":
@@ -77,7 +90,8 @@ export default function ExplorePage() {
     
     if (location && location !== "all") {
       results = results.filter(company => {
-        const companyLocation = company.location.toLowerCase();
+        // Safely access location property
+        const companyLocation = (company.location || '').toLowerCase();
         
         switch(location.toLowerCase()) {
           case "remote":
@@ -146,7 +160,7 @@ export default function ExplorePage() {
         });
         
         // Refresh companies list
-        const updatedCompanies = getCompanies();
+        const updatedCompanies = await getCompanies();
         setCompanies(updatedCompanies);
         setFilteredCompanies(updatedCompanies);
         setLinkedinUrl("");
@@ -356,7 +370,10 @@ export default function ExplorePage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1">
                         <div className="text-success text-lg font-semibold">
-                          {company.rating || (company.greenFlagCount / (company.greenFlagCount + company.redFlagCount) * 5).toFixed(1) || 0} / 5
+                          {company.rating || 
+                           (company.greenFlagCount && company.redFlagCount ? 
+                            (company.greenFlagCount / (company.greenFlagCount + company.redFlagCount) * 5).toFixed(1) 
+                            : 0)} / 5
                         </div>
                         <div className="text-xs text-muted-foreground">
                           ({company.reviews || company.reviewCount || 0} reviews)
