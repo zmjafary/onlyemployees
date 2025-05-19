@@ -1,34 +1,70 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getAllCompanies } from "@/services/companyService";
+import { getCompanies } from "@/services/companyService";
 import { CompanyType } from "@/types/company";
 import { motion } from "framer-motion";
 import { Building, Flag } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from '@inertiajs/react';
+import { Link } from "react-router-dom";
 
 export function FlagCards() {
   const [redFlagCompanies, setRedFlagCompanies] = useState<CompanyType[]>([]);
   const [greenFlagCompanies, setGreenFlagCompanies] = useState<CompanyType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Get all companies and sort them by flag counts
-    const companies = getAllCompanies();
+    const fetchCompanies = async () => {
+      try {
+        const companies = await getCompanies();
 
-    // Sort by red flag count (high to low) for Red Flag Wall
-    const redCompanies = [...companies]
-      .sort((a, b) => b.redFlagCount - a.redFlagCount)
-      .slice(0, 3); // Get top 3
+        // Sort by red flag count (high to low) for Red Flag Wall
+        const redCompanies = [...companies]
+          .sort((a, b) => (b.redFlagCount || 0) - (a.redFlagCount || 0))
+          .slice(0, 3); // Get top 3
 
-    // Sort by green flag count (high to low) for Hall of Fame  
-    const greenCompanies = [...companies]
-      .sort((a, b) => b.greenFlagCount - a.redFlagCount)
-      .slice(0, 3); // Get top 3
+        // Sort by green flag count (high to low) for Hall of Fame  
+        const greenCompanies = [...companies]
+          .sort((a, b) => (b.greenFlagCount || 0) - (a.greenFlagCount || 0))
+          .slice(0, 3); // Get top 3
 
-    setRedFlagCompanies(redCompanies);
-    setGreenFlagCompanies(greenCompanies);
+        setRedFlagCompanies(redCompanies);
+        setGreenFlagCompanies(greenCompanies);
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCompanies();
   }, []);
+
+  if (isLoading) {
+    return (
+      <section className="py-16">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="animate-pulse">
+              <div className="h-8 bg-muted rounded w-1/2 mb-6"></div>
+              <div className="space-y-4">
+                <div className="h-40 bg-muted rounded"></div>
+                <div className="h-40 bg-muted rounded"></div>
+              </div>
+            </div>
+            <div className="animate-pulse">
+              <div className="h-8 bg-muted rounded w-1/2 mb-6"></div>
+              <div className="space-y-4">
+                <div className="h-40 bg-muted rounded"></div>
+                <div className="h-40 bg-muted rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16">
@@ -43,8 +79,8 @@ export function FlagCards() {
               {redFlagCompanies.map((company, index) => {
                 // Get the top red flag from the company
                 const topRedFlag = company.flags
-                  .filter(flag => flag.type === "red")
-                  .sort((a, b) => b.votes - a.votes)[0];
+                  ?.filter(flag => flag.type === "red")
+                  ?.sort((a, b) => b.votes - a.votes)[0];
 
                 return (
                   <motion.div
@@ -53,7 +89,7 @@ export function FlagCards() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    <Link href={`/company/${company.id}`}>
+                    <Link to={`/company/${company.id}`}>
                       <Card className="hover:shadow-md transition-shadow">
                         <CardContent className="p-6">
                           <div className="flex items-center gap-2 mb-3">
@@ -85,7 +121,7 @@ export function FlagCards() {
                     </Link>
                     <div className="text-center mt-2">
                       <Button asChild variant="outline" size="sm" className="text-muted-foreground text-xs w-full">
-                        <Link href={`/review?company=${company.id}`}>
+                        <Link to={`/review?company=${company.id}`}>
                           Add your experience
                         </Link>
                       </Button>
@@ -105,8 +141,8 @@ export function FlagCards() {
               {greenFlagCompanies.map((company, index) => {
                 // Get the top green flag from the company
                 const topGreenFlag = company.flags
-                  .filter(flag => flag.type === "green")
-                  .sort((a, b) => b.votes - a.votes)[0];
+                  ?.filter(flag => flag.type === "green")
+                  ?.sort((a, b) => b.votes - a.votes)[0];
 
                 return (
                   <motion.div
@@ -115,7 +151,7 @@ export function FlagCards() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    <Link href={`/company/${company.id}`}>
+                    <Link to={`/company/${company.id}`}>
                       <Card className="hover:shadow-md transition-shadow">
                         <CardContent className="p-6">
                           <div className="flex items-center gap-2 mb-3">
@@ -147,7 +183,7 @@ export function FlagCards() {
                     </Link>
                     <div className="text-center mt-2">
                       <Button asChild variant="outline" size="sm" className="text-muted-foreground text-xs w-full">
-                        <Link href={`/review?company=${company.id}`}>
+                        <Link to={`/review?company=${company.id}`}>
                           Add your experience
                         </Link>
                       </Button>

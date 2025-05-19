@@ -1,162 +1,228 @@
 
+import { fetchData, postData } from '@/services/api';
+import { CompanyType } from '@/types/company';
 import companiesData from "@/data/companies.json";
-import { CompanyType } from "@/types/company";
-import axios from "axios";
 
-// Type assertion for the imported JSON data
-const companies = companiesData as CompanyType[];
+// Convert the ID to string in the imported data (for fallback use)
+const localCompanies: CompanyType[] = companiesData.map(company => ({
+  ...company,
+  id: String(company.id)
+}));
 
-export const getAllCompanies = (): CompanyType[] => {
-  return companies;
-};
-
-export const getCompanyById = (id: string): CompanyType | undefined => {
-  return companies.find(company => company.id === id);
-};
-
-export const searchCompanies = (query: string): CompanyType[] => {
-  const lowercaseQuery = query.toLowerCase();
-  return companies.filter(company => 
-    company.name.toLowerCase().includes(lowercaseQuery) ||
-    company.industry.toLowerCase().includes(lowercaseQuery)
-  );
-};
-
-export const filterCompaniesByIndustry = (companies: CompanyType[], industry: string): CompanyType[] => {
-  if (!industry || industry === "all") return companies;
-  return companies.filter(company => 
-    company.industry.toLowerCase() === industry.toLowerCase()
-  );
-};
-
-export const filterCompaniesBySize = (companies: CompanyType[], size: string): CompanyType[] => {
-  if (!size || size === "all") return companies;
-  
-  return companies.filter(company => {
-    const employeeCount = parseInt(company.size.replace(/,/g, '').split('+')[0]);
-    
-    switch(size.toLowerCase()) {
-      case "small":
-        return employeeCount < 500;
-      case "medium":
-        return employeeCount >= 500 && employeeCount <= 10000;
-      case "large":
-        return employeeCount > 10000;
-      default:
-        return false;
-    }
-  });
-};
-
-export const filterCompaniesByLocation = (companies: CompanyType[], location: string): CompanyType[] => {
-  if (!location || location === "all") return companies;
-  
-  return companies.filter(company => {
-    const companyLocation = company.location.toLowerCase();
-    
-    switch(location.toLowerCase()) {
-      case "remote":
-        return companyLocation.includes("remote");
-      case "hybrid":
-        // For hybrid, we'll look for companies that mention both office and remote
-        return companyLocation.includes("hybrid") || 
-              (companyLocation.includes("remote") && companyLocation.includes("office"));
-      case "on-site":
-        return !companyLocation.includes("remote") && 
-               !companyLocation.includes("hybrid") &&
-               (companyLocation.includes("office") || 
-                companyLocation.includes("cupertino") ||
-                companyLocation.includes("menlo park") ||
-                companyLocation.includes("mountain view") ||
-                companyLocation.includes("redmond") ||
-                companyLocation.includes("seattle"));
-      default:
-        return false;
-    }
-  });
-};
-
-export const addNewCompany = (company: CompanyType): CompanyType => {
-  // In a real application, this would save to a database
-  // For our mock implementation, we'll add it to our array
-  companies.push(company);
-  return company;
-};
-
-export const fetchCompanyFromLinkedIn = async (linkedinUrl: string): Promise<CompanyType | null> => {
-
+/**
+ * Get all companies from API
+ * @returns Array of companies
+ */
+export const getCompanies = async (): Promise<CompanyType[]> => {
   try {
-    // Validate the LinkedIn URL
-    if (!linkedinUrl.includes("linkedin.com/company/")) {
-      console.error("Invalid LinkedIn company URL");
-      return null;
-    }
+    return await fetchData<CompanyType[]>('/companies');
+  } catch (error) {
+    console.error('Failed to fetch companies from API, using local data', error);
+    return localCompanies;
+  }
+};
 
-    // Extract company identifier from URL
+/**
+ * Get a company by ID from API
+ * @param id Company ID
+ * @returns Company or undefined if not found
+ */
+export const getCompanyById = async (id: string): Promise<CompanyType | undefined> => {
+  try {
+    return await fetchData<CompanyType>(`/companies/${id}`);
+  } catch (error) {
+    console.error(`Failed to fetch company ${id} from API, using local data`, error);
+    return localCompanies.find((company) => company.id === id);
+  }
+};
+
+/**
+ * Get featured companies from API
+ * @param limit Number of companies to return
+ * @returns Array of featured companies
+ */
+export const getFeaturedCompanies = async (limit = 6): Promise<CompanyType[]> => {
+  try {
+    return await fetchData<CompanyType[]>(`/companies/featured?limit=${limit}`);
+  } catch (error) {
+    console.error('Failed to fetch featured companies from API, using local data', error);
+    return localCompanies
+      .filter((company) => company.featured)
+      .slice(0, limit);
+  }
+};
+
+/**
+ * Search companies by name from API
+ * @param query Search query
+ * @returns Array of matching companies
+ */
+export const searchCompanies = async (query: string): Promise<CompanyType[]> => {
+  if (!query || query.trim() === "") {
+    return [];
+  }
+  
+  try {
+    return await fetchData<CompanyType[]>(`/companies/search?query=${encodeURIComponent(query)}`);
+  } catch (error) {
+    console.error('Failed to search companies from API, using local data', error);
+    
+    const normalizedQuery = query.toLowerCase();
+    
+    return localCompanies.filter((company) =>
+      company.name.toLowerCase().includes(normalizedQuery) ||
+      (company.display_name && company.display_name.toLowerCase().includes(normalizedQuery)) ||
+      (company.industry && company.industry.toLowerCase().includes(normalizedQuery)) ||
+      (company.location && company.location.toLowerCase().includes(normalizedQuery))
+    );
+  }
+};
+
+/**
+ * Filter companies by industry from API
+ * @param industry Industry to filter by
+ * @returns Array of matching companies
+ */
+export const filterCompaniesByIndustry = async (industry: string): Promise<CompanyType[]> => {
+  if (!industry || industry === "all") {
+    return getCompanies();
+  }
+  
+  try {
+    return await fetchData<CompanyType[]>(`/companies/filter/industry/${encodeURIComponent(industry)}`);
+  } catch (error) {
+    console.error('Failed to filter companies by industry from API, using local data', error);
+    
+    return localCompanies.filter(
+      (company) => company.industry.toLowerCase() === industry.toLowerCase()
+    );
+  }
+};
+
+/**
+ * Filter companies by tags from API
+ * @param tags Array of tags to filter by
+ * @returns Array of matching companies
+ */
+export const filterCompaniesByTags = async (tags: string[]): Promise<CompanyType[]> => {
+  if (!tags || tags.length === 0) {
+    return getCompanies();
+  }
+  
+  try {
+    return await fetchData<CompanyType[]>('/companies/filter/tags', {
+      params: { tags: tags.join(',') }
+    });
+  } catch (error) {
+    console.error('Failed to filter companies by tags from API, using local data', error);
+    
+    return localCompanies.filter((company) =>
+      company.tags?.some((tag) => tags.includes(tag))
+    );
+  }
+};
+
+/**
+ * Get companies with the most reviews from API
+ * @param limit Number of companies to return
+ * @returns Array of companies sorted by review count
+ */
+export const getCompaniesWithMostReviews = async (limit = 5): Promise<CompanyType[]> => {
+  try {
+    return await fetchData<CompanyType[]>(`/companies/most-reviewed?limit=${limit}`);
+  } catch (error) {
+    console.error('Failed to fetch most reviewed companies from API, using local data', error);
+    
+    return [...localCompanies]
+      .sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0))
+      .slice(0, limit);
+  }
+};
+
+/**
+ * Get companies with the highest ratings from API
+ * @param limit Number of companies to return
+ * @returns Array of companies sorted by rating
+ */
+export const getTopRatedCompanies = async (limit = 5): Promise<CompanyType[]> => {
+  try {
+    return await fetchData<CompanyType[]>(`/companies/top-rated?limit=${limit}`);
+  } catch (error) {
+    console.error('Failed to fetch top rated companies from API, using local data', error);
+    
+    return [...localCompanies]
+      .filter((company) => company.rating !== undefined && company.rating > 0)
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, limit);
+  }
+};
+
+/**
+ * Get distinct industries from all companies from API
+ * @returns Array of unique industry names
+ */
+export const getDistinctIndustries = async (): Promise<string[]> => {
+  try {
+    return await fetchData<string[]>('/companies/industries');
+  } catch (error) {
+    console.error('Failed to fetch industries from API, using local data', error);
+    
+    const industriesSet = new Set<string>();
+    
+    localCompanies.forEach((company) => {
+      if (company.industry) {
+        industriesSet.add(company.industry);
+      }
+    });
+    
+    return Array.from(industriesSet).sort();
+  }
+};
+
+/**
+ * Import company from LinkedIn URL via API
+ * @param linkedinUrl LinkedIn company URL
+ * @returns Company data or null if not found
+ */
+export const importCompanyFromLinkedIn = async (linkedinUrl: string): Promise<CompanyType | null> => {
+  if (!linkedinUrl.includes("linkedin.com/company")) {
+    return null;
+  }
+  
+  try {
+    return await postData<CompanyType, { url: string }>('/companies/import-linkedin', { 
+      url: linkedinUrl 
+    });
+  } catch (error) {
+    console.error('Failed to import company from LinkedIn via API, using mock data', error);
+    
+    // Extract company name/id from URL
     const urlParts = linkedinUrl.split("/");
-    const companySlug = urlParts[urlParts.indexOf("company") + 1]?.split("?")[0];
-
-    if (!companySlug) {
-      console.error("Could not extract company name from URL");
-      return null;
+    const companySlug = urlParts[urlParts.length - 1].split("?")[0];
+    
+    // For demo purposes, return a matching company if we have one
+    // or a mock company if we don't
+    const matchingCompany = localCompanies.find(
+      (c) => c.name.toLowerCase().replace(/\s+/g, "-") === companySlug
+    );
+    
+    if (matchingCompany) {
+      return matchingCompany;
     }
-
-    const clientId = import.meta.env.VITE_LINKEDIN_CLIENT_ID;
-    const clientSecret = import.meta.env.VITE_LINKEDIN_CLIENT_SECRET;
-
-    // Obtain the Bearer token
-    const authUrl = "https://www.linkedin.com/oauth/v2/accessToken";
-    const authResponse = await axios.post(authUrl, new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: clientId,
-      client_secret: clientSecret,
-    }), {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-
-    console.log("Auth Response:", authResponse);
-
-    const { access_token } = authResponse.data;
-
-    if (!access_token) {
-      console.error("Failed to obtain access token");
-      return null;
-    }
-
-    // LinkedIn API endpoint
-    const apiUrl = `https://api.linkedin.com/v2/organizations?q=vanityName&vanityName=${companySlug}`;
-
-    // Make the API request
-    const response = await axios.get(apiUrl, {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
-
-    console.log("Auth Response:", response);
-
-    const data = response.data;
-
-    // Map LinkedIn API response to CompanyType
-    const company: CompanyType = {
-      id: data.id,
-      name: data.localizedName,
-      logo: data.logoV2?.original?.url || "https://placehold.co/200",
-      industry: data.industry || "Unknown",
-      location: data.headquarters?.address?.city || "Unknown",
-      size: data.staffCountRange?.localizedName || "Unknown",
-      founded: data.foundedOn?.year || "Unknown",
+    
+    // Return a mock company with the slug as the name
+    return {
+      id: String(localCompanies.length + 1),
+      name: companySlug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
+      logo: "https://logo.clearbit.com/" + companySlug + ".com",
+      industry: "Technology",
+      location: "Unknown",
+      size: "Unknown",
+      founded: "Unknown",
       redFlagCount: 0,
       greenFlagCount: 0,
       reviewCount: 0,
-      flags: [],
+      flags: []
     };
-
-    return company;
-  } catch (error) {
-    console.error("Error fetching company data from LinkedIn:", error);
-    return null;
   }
 };

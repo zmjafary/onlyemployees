@@ -2,12 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { fetchCompanyFromLinkedIn, searchCompanies } from "@/services/companyService";
+import { importCompanyFromLinkedIn, searchCompanies } from "@/services/companyService";
 import { CompanyType } from "@/types/company";
 import { motion } from "framer-motion";
 import { Building, Flag, Search } from "lucide-react";
 import { useState } from "react";
-import { Link } from '@inertiajs/react';
+import { Link } from "react-router-dom";
 
 export function CompanySearch() {
   const [url, setUrl] = useState("");
@@ -34,7 +34,7 @@ export function CompanySearch() {
       // Check if this is a LinkedIn URL or just a search term
       if (url.includes('linkedin.com/company')) {
         // This is a LinkedIn URL, try to fetch company data
-        const company = await fetchCompanyFromLinkedIn(url);
+        const company = await importCompanyFromLinkedIn(url);
 
         if (company) {
           setCompanies([company]);
@@ -45,7 +45,7 @@ export function CompanySearch() {
         } else {
           // If LinkedIn fetch failed, do a regular search with any company name in the URL
           const companyName = url.split('/').pop()?.split('?')[0] || '';
-          const searchResults = searchCompanies(companyName);
+          const searchResults = await searchCompanies(companyName);
           setCompanies(searchResults);
 
           if (searchResults.length === 0) {
@@ -58,7 +58,7 @@ export function CompanySearch() {
         }
       } else {
         // This is a regular search term
-        const searchResults = searchCompanies(url);
+        const searchResults = await searchCompanies(url);
         setCompanies(searchResults);
 
         if (searchResults.length === 0) {
@@ -208,7 +208,7 @@ export function CompanySearch() {
                           className="text-primary border-primary hover:bg-primary/10w-full"
                           asChild
                         >
-                          <Link href={`/company/${company.id}`}>
+                          <Link to={`/company/${company.id}`}>
                             View Insights
                           </Link>
                         </Button>
@@ -218,7 +218,7 @@ export function CompanySearch() {
                           className="w-full"
                           asChild
                         >
-                          <Link href={`/review?company=${company.id}`}>
+                          <Link to={`/review?company=${company.id}`}>
                             Share Experience
                           </Link>
                         </Button>
@@ -233,11 +233,11 @@ export function CompanySearch() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground">
-            Popular searches: <Link href="/company/google" className="text-primary hover:underline">Google</Link>,
-            <Link href="/company/microsoft" className="text-primary hover:underline"> Microsoft</Link>,
-            <Link href="/company/amazon" className="text-primary hover:underline"> Amazon</Link>,
-            <Link href="/company/facebook" className="text-primary hover:underline"> Facebook</Link>,
-            <Link href="/company/apple" className="text-primary hover:underline"> Apple</Link>
+            Popular searches: <Link to="/company/google" className="text-primary hover:underline">Google</Link>,
+            <Link to="/company/microsoft" className="text-primary hover:underline"> Microsoft</Link>,
+            <Link to="/company/amazon" className="text-primary hover:underline"> Amazon</Link>,
+            <Link to="/company/facebook" className="text-primary hover:underline"> Facebook</Link>,
+            <Link to="/company/apple" className="text-primary hover:underline"> Apple</Link>
           </p>
         </div>
       </div>

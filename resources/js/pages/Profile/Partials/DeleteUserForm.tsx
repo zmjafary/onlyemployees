@@ -84,9 +84,8 @@ export default function DeleteUserForm({
                     <div className="mt-6">
                         <Label
                             htmlFor="password"
-                            value="Password"
                             className="sr-only"
-                        />
+                        >Password</Label>
 
                         <Input
                             id="password"
@@ -98,7 +97,6 @@ export default function DeleteUserForm({
                                 setData('password', e.target.value)
                             }
                             className="mt-1 block w-3/4"
-                            isFocused
                             placeholder="Password"
                         />
 

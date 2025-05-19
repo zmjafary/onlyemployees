@@ -50,7 +50,7 @@ export function Header() {
           </a>
           <ThemeToggle />
           <Button asChild className="bg-primary text-white">
-            <Link href="/review">Start Reviewing</Link>
+            <Link href="/auth">Join Oe.</Link>
           </Button>
         </nav>
 

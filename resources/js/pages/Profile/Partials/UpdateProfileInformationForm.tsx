@@ -43,7 +43,7 @@ export default function UpdateProfileInformation({
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <Label htmlFor="name" value="Name" />
+                    <Label htmlFor="name">Name</Label>
 
                     <Input
                         id="name"
@@ -51,7 +51,6 @@ export default function UpdateProfileInformation({
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
                         required
-                        isFocused
                         autoComplete="name"
                     />
 
@@ -59,7 +58,7 @@ export default function UpdateProfileInformation({
                 </div>
 
                 <div>
-                    <Label htmlFor="email" value="Email" />
+                    <Label htmlFor="email" >Email</Label>
 
                     <Input
                         id="email"

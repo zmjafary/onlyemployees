@@ -26,6 +26,10 @@ Route::get('/review', function () {
     return Inertia::render('ReviewPage');
 });
 
+Route::get('/auth', function () {
+    return Inertia::render('AuthPage');
+});
+
 Route::get('/company/{companyId}', function ($companyId) {
     return Inertia::render('CompanyProfilePage', ['companyId' => $companyId]);
 });
