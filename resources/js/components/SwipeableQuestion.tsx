@@ -1,9 +1,8 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
 import { QuestionType } from "@/types/company";
-import { Card } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SwipeableQuestionProps {
   question: QuestionType;
@@ -20,6 +19,7 @@ export function SwipeableQuestion({
   const [gifLoaded, setGifLoaded] = useState({ positive: false, negative: false });
   const cardRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
+  const isMobile = useIsMobile();
 
   // Get the appropriate GIF URLs with fallbacks
   const positiveGif = question.positiveGif || 
@@ -111,6 +111,11 @@ export function SwipeableQuestion({
     return backgroundColor;
   };
 
+  // Calculate GIF size based on screen size
+  const gifSize = isMobile ? 80 : 120;
+  // Adjust position for mobile
+  const gifTopPosition = isMobile ? "2%" : "5%";
+
   return (
     <div className="relative">
       <motion.div
@@ -122,75 +127,89 @@ export function SwipeableQuestion({
         animate={controls}
         initial={{ x: 0 }}
         whileTap={{ cursor: "grabbing" }}
-        className={`${getCardStyle()} rounded-2xl shadow-lg border border-border p-6 cursor-grab active:cursor-grabbing touch-none w-full transition-colors duration-200`}
-        style={{ 
-          rotate: getRotation(), 
-          touchAction: "none" // Prevent browser's default touch behavior
-        }}
+        className={`${getCardStyle()} rounded-xl border border-border shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(255,255,255,0.1)] p-4 cursor-grab active:cursor-grabbing w-full transition-colors duration-200`}
+        style={{ rotate: dragX / 20, touchAction: "none" }}
       >
-        <div className="mb-3 text-muted-foreground text-xs font-medium uppercase tracking-wide">
+        {/* Question Metadata */}
+        <div className="text-xs text-muted-foreground mb-2">
           {question.category} • {question.topic}
         </div>
         
-        <h3 className="text-xl font-semibold mb-6">
+        {/* Main Question */}
+        <h3 className="text-lg font-medium mb-4 leading-snug">
           {question.question || question.question_regular || question.question_meme}
         </h3>
         
+        {/* Swipe Indicators */}
         <div className="flex justify-between text-sm mb-4">
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full mr-2 bg-red-500"></div>
-            <span className="text-red-700 dark:text-red-400">No</span>
+            <div className="w-2 h-2 rounded-full mr-2 bg-red-500"></div>
+            <span className="text-red-500">No</span>
           </div>
           <div className="flex items-center">
-            <span className="text-green-700 dark:text-green-400">Yes</span>
-            <div className="w-3 h-3 rounded-full ml-2 bg-green-500"></div>
+            <span className="text-green-500">Yes</span>
+            <div className="w-2 h-2 rounded-full ml-2 bg-green-500"></div>
           </div>
         </div>
         
-        <div className="mt-6">
-          <p className="text-sm font-medium mb-2">Share your experience (optional)</p>
+        {/* Optional Comment */}
+        <div className="mb-4">
           <Textarea
-            placeholder="Tell your story about this aspect of the company..."
+            placeholder="Share your experience (optional)..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="resize-none text-sm min-h-[100px]"
+            className="resize-none text-sm min-h-[80px] bg-background/50"
           />
         </div>
         
+        {/* Additional Info (only shown if exists) */}
         {question.favorStatement && (
-          <div className="my-4 p-3 bg-green-50 dark:bg-green-900/10 rounded-lg">
-            <h4 className="text-sm font-semibold text-green-700 dark:text-green-400">{question.favorStatement}</h4>
-            <p className="text-xs text-green-600 dark:text-green-500/80 mt-1">{question.favorDescription}</p>
+          <div className="p-3 bg-green-50/50 dark:bg-green-900/10 rounded-lg mb-3">
+            <h4 className="text-sm font-medium text-green-700 dark:text-green-400">
+              {question.favorStatement}
+            </h4>
           </div>
         )}
         
         {question.againstStatement && (
-          <div className="my-4 p-3 bg-red-50 dark:bg-red-900/10 rounded-lg">
-            <h4 className="text-sm font-semibold text-red-700 dark:text-red-400">{question.againstStatement}</h4>
-            <p className="text-xs text-red-600 dark:text-red-500/80 mt-1">{question.againstDescription}</p>
+          <div className="p-3 bg-red-50/50 dark:bg-red-900/10 rounded-lg">
+            <h4 className="text-sm font-medium text-red-700 dark:text-red-400">
+              {question.againstStatement}
+            </h4>
           </div>
         )}
       </motion.div>
 
-      {/* GIF Display Containers - Positioned better with fixed dimensions */}
+      {/* GIF Display Containers - Adjusted for mobile */}
       {showGif === "positive" && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="absolute top-[5%] right-[-15px] w-[120px] h-[120px] rounded-full overflow-hidden border-4 border-green-500 shadow-lg z-10"
+          className="absolute"
+          style={{
+            top: gifTopPosition,
+            right: "-10px",
+            width: `${gifSize}px`,
+            height: `${gifSize}px`,
+            borderRadius: "50%",
+            overflow: "hidden",
+            border: "4px solid #22c55e", // green-500
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            zIndex: 10
+          }}
         >
           <div className="w-full h-full bg-green-100 flex items-center justify-center">
-            <img
+          <img
               src={positiveGif}
               alt="Yes"
-              className="w-full h-full object-cover"
+            className="w-full h-full object-cover"
               style={{ display: gifLoaded.positive ? "block" : "none" }}
-              onError={(e) => {
+            onError={(e) => {
                 // Fallback if image fails to load
-                const target = e.target as HTMLImageElement;
+              const target = e.target as HTMLImageElement;
                 target.src = "https://media.giphy.com/media/3oKIPjzfv0sI2p7fDW/giphy.gif";
-              }}
-            />
+            }}
+          />
             {!gifLoaded.positive && (
               <div className="animate-pulse flex-1 h-full bg-green-200"></div>
             )}
@@ -202,7 +221,18 @@ export function SwipeableQuestion({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="absolute top-[5%] left-[-15px] w-[120px] h-[120px] rounded-full overflow-hidden border-4 border-red-500 shadow-lg z-10"
+          className="absolute"
+          style={{
+            top: gifTopPosition,
+            left: "-10px",
+            width: `${gifSize}px`,
+            height: `${gifSize}px`,
+            borderRadius: "50%",
+            overflow: "hidden",
+            border: "4px solid #ef4444", // red-500
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            zIndex: 10
+          }}
         >
           <div className="w-full h-full bg-red-100 flex items-center justify-center">
             <img
@@ -222,27 +252,6 @@ export function SwipeableQuestion({
           </div>
         </motion.div>
       )}
-      
-      {/* More visible instruction indicator */}
-      <div className="absolute -bottom-4 left-0 w-full flex justify-center">
-        <div className="text-foreground text-sm bg-background px-4 py-2 rounded-full shadow-md border border-border font-medium flex items-center">
-          <motion.div 
-            animate={{ x: [-3, 3, -3] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            className="mr-1 text-red-500"
-          >
-            ←
-          </motion.div>
-          Swipe left for No, right for Yes
-          <motion.div 
-            animate={{ x: [3, -3, 3] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            className="ml-1 text-green-500"
-          >
-            →
-          </motion.div>
-        </div>
-      </div>
     </div>
   );
 }

@@ -83,13 +83,13 @@ export function QuestionSwiper({ questions, onAnswerAll }: QuestionSwiperProps) 
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-card border border-border rounded-xl p-8 text-center max-w-md mx-auto shadow-md"
+        className="bg-card border border-border rounded-xl p-4 sm:p-8 text-center max-w-md mx-auto shadow-md"
       >
         <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <Check className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="text-2xl font-bold mb-2">All Done!</h3>
-        <p className="text-muted-foreground mb-2">
+        <h3 className="text-xl sm:text-2xl font-bold mb-2">All Done!</h3>
+        <p className="text-sm sm:text-base text-muted-foreground mb-2">
           Thank you for answering all the questions. Your feedback is valuable!
         </p>
         
@@ -111,8 +111,8 @@ export function QuestionSwiper({ questions, onAnswerAll }: QuestionSwiperProps) 
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="mb-8">
+    <div className="w-full max-w-md mx-auto px-2 sm:px-0">
+      <div className="mb-4 sm:mb-8">
         <div className="h-2 bg-muted rounded-full mb-2">
           <motion.div
             className="h-2 bg-primary rounded-full"
@@ -120,7 +120,7 @@ export function QuestionSwiper({ questions, onAnswerAll }: QuestionSwiperProps) 
             transition={{ duration: 0.3 }}
           />
         </div>
-        <div className="flex justify-between items-center text-sm">
+        <div className="flex justify-between items-center text-xs sm:text-sm">
           <span className="text-muted-foreground">
             Question {currentIndex + 1} of {questions.length}
           </span>
@@ -130,7 +130,7 @@ export function QuestionSwiper({ questions, onAnswerAll }: QuestionSwiperProps) 
         </div>
       </div>
 
-      <div className="relative min-h-[400px]">
+      <div className="relative min-h-[350px] sm:min-h-[400px]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentIndex}
@@ -159,31 +159,37 @@ export function QuestionSwiper({ questions, onAnswerAll }: QuestionSwiperProps) 
         </AnimatePresence>
       </div>
       
-      {/* Swapped button positions: No on left, Yes on right */}
-      <div className="flex justify-center gap-4 mt-12">
-        <Button 
-          onClick={() => handleButtonSwipe(false)} 
-          variant="outline"
-          className="px-6 py-5 text-base bg-red-600 hover:bg-red-700 text-white border-red-700 hover:text-white dark:bg-red-700 dark:hover:bg-red-800 rounded-xl transition-all shadow-md flex-1"
-          disabled={isTransitioning}
-        >
-          <ThumbsDown className="mr-2" size={20} />
-          No
-        </Button>
-        
-        <Button 
-          onClick={() => handleButtonSwipe(true)} 
-          className="px-6 py-5 text-base bg-green-600 hover:bg-green-700 text-white dark:bg-green-600 dark:hover:bg-green-700 rounded-xl transition-all shadow-md flex-1"
-          disabled={isTransitioning}
-        >
-          <ThumbsUp className="mr-2" size={20} />
-          Yes
-        </Button>
+      {/* More visible instruction indicator - now responsive */}
+      <div className="my-4 text-center text-sm text-muted-foreground">
+        <p>Swipe ← or → to answer</p>
       </div>
+
+      {/* Swapped button positions: No on left, Yes on right */}
+      <div className="flex justify-center gap-3 sm:gap-4">
+          <Button 
+            onClick={() => handleButtonSwipe(false)} 
+            variant="outline"
+            className="px-3 sm:px-6 py-4 sm:py-5 text-sm sm:text-base bg-transparent hover:bg-red-50/50 dark:hover:bg-red-900/20 text-foreground border-border hover:border-red-300 dark:hover:border-red-700 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-all duration-200 flex-1 group"
+            disabled={isTransitioning}
+          >
+            <ThumbsDown className="mr-1 sm:mr-2 text-red-600 dark:text-red-500 group-hover:scale-110 transition-transform duration-200" size={isMobile ? 16 : 20} />
+            No
+          </Button>
+          
+          <Button 
+            onClick={() => handleButtonSwipe(true)} 
+            variant="outline"
+            className="px-3 sm:px-6 py-4 sm:py-5 text-sm sm:text-base bg-transparent hover:bg-green-50/50 dark:hover:bg-green-900/20 text-foreground border-border hover:border-green-300 dark:hover:border-green-700 hover:text-green-600 dark:hover:text-green-400 rounded-xl transition-all duration-200 flex-1 group"
+            disabled={isTransitioning}
+          >
+            <ThumbsUp className="mr-1 sm:mr-2 text-green-600 dark:text-green-500 group-hover:scale-110 transition-transform duration-200" size={isMobile ? 16 : 20} />
+            Yes
+          </Button>
+        </div>
       
       {/* Additional visual instruction */}
-      <div className="mt-4 text-center">
-        <p className="text-muted-foreground text-sm italic">
+      <div className="mt-3 sm:mt-4 text-center">
+        <p className="text-xs sm:text-sm text-muted-foreground italic">
           Use the buttons above or swipe the card to answer
         </p>
       </div>

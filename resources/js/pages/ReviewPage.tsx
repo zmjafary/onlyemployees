@@ -428,10 +428,11 @@ export default function ReviewPage() {
                 />
               </div>
               
-              <div className="mt-8 flex justify-between">
+              <div className="mt-6 sm:mt-8 flex justify-between">
                 <Button
                   type="button"
                   variant="outline"
+                  className="w-full sm:w-auto"
                   onClick={handlePrevStep}
                 >
                   Back to Company Info
@@ -471,8 +472,6 @@ export default function ReviewPage() {
                           : "N/A"
                       }
                     </p>
-                  </div>
-                  <div>
                     <p className="text-sm mb-1">
                       <span className="font-medium">Department:</span> {
                         department !== "all" 
@@ -517,15 +516,20 @@ export default function ReviewPage() {
                 </div>
               </div>
               
-              <div className="mt-8 flex justify-between">
+              <div className="mt-6 sm:mt-8 flex flex-col-reverse sm:flex-row justify-between gap-3 sm:gap-0">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setCurrentStep(2)}
+                  className="w-full sm:w-fit px-4 py-3"
                 >
                   Back to Questions
                 </Button>
-                <Button type="submit" onClick={handleSubmit} className="bg-primary">
+                <Button 
+                  type="submit" 
+                  onClick={handleSubmit} 
+                  className="w-full sm:w-fit px-4 py-3 bg-primary hover:bg-primary/90 transition-colors"
+                >
                   Submit Anonymous Review
                 </Button>
               </div>
@@ -557,9 +561,8 @@ export default function ReviewPage() {
             </p>
           </motion.div>
 
-          <div className="bg-background rounded-lg shadow-lg overflow-hidden">
-            <div className="p-6">
-              <div className="flex justify-center mb-8">
+          <div className="bg-background rounded-lg overflow-hidden">
+            <div className="flex justify-center mb-8">
                 <div className="flex">
                   <div className={`flex items-center ${currentStep >= 1 ? "text-primary" : "text-muted-foreground"}`}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-2 ${currentStep >= 1 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
@@ -587,7 +590,6 @@ export default function ReviewPage() {
               <form onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }}>
                 {renderStepContent()}
               </form>
-            </div>
           </div>
         </div>
       </section>
