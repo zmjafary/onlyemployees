@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Github, Coffee } from 'lucide-react';
+import { Coffee, Github } from 'lucide-react';
 
 
 export function GitHubSection() {

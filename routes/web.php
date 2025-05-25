@@ -23,7 +23,9 @@ Route::get('/explore', function () {
 });
 
 Route::get('/review', function () {
-    return Inertia::render('ReviewPage');
+    return Inertia::render('ReviewPage', [
+        'companyId' => request()->query('company', null),
+    ]);
 });
 
 Route::get('/auth', function () {

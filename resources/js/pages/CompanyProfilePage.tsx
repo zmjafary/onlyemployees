@@ -1,25 +1,29 @@
 
 import { CompanyProfile } from "@/components/CompanyProfile";
-import { getCompanyById } from "@/services/companyService";
-import { CompanyType } from "@/types/company";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { getCompanyExtendedById } from "@/lib/api/companiesExtended";
 
-export default function CompanyProfilePage() {
-  // Get company ID from URL parameters
-  const { companyId } = useParams<{ companyId: string }>();
-  
-  // Fetch company data using React Query
+export default function CompanyProfilePage({ companyId = "" }: { companyId?: string }) {
+  console.log('CompanyProfilePage - companyId from props:', companyId);
+
   const { data: company, isLoading, error } = useQuery({
-    queryKey: ['company', companyId],
-    queryFn: () => getCompanyById(companyId!),
+    queryKey: ['company-page', companyId],
+    queryFn: () => getCompanyExtendedById(companyId),
     enabled: !!companyId,
   });
   
   if (!companyId) {
-    return <div>Company ID not provided</div>;
+    return (
+      <div className="w-full py-20 text-center">
+        <div className="container-custom">
+          <h2 className="text-xl font-medium mb-2">Invalid Company ID</h2>
+          <p className="text-muted-foreground">
+            The company ID was not provided in the URL.
+          </p>
+        </div>
+      </div>
+    );
   }
   
   if (isLoading) {
@@ -36,6 +40,7 @@ export default function CompanyProfilePage() {
   }
   
   if (error) {
+    console.error('CompanyProfilePage - Error loading company:', error);
     return (
       <div className="w-full py-20 text-center">
         <div className="container-custom">

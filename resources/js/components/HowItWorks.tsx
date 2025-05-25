@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { ClipboardIcon, EyeIcon, ShieldCheckIcon, CheckCircleIcon } from "lucide-react";
+import { CheckCircleIcon, ClipboardIcon, EyeIcon, ShieldCheckIcon } from "lucide-react";
 
 const steps = [
   {

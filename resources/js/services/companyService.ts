@@ -1,228 +1,156 @@
 
-import { fetchData, postData } from '@/services/api';
-import { CompanyType } from '@/types/company';
-import companiesData from "@/data/companies.json";
+import { 
+  CompanyType, 
+  QuestionType, 
+  CountryType, 
+  CityType, 
+  RoleType, 
+  DepartmentType, 
+  SurveyType, 
+  SurveyAnswerType 
+} from '@/types/company';
+import { getCompanies as apiGetCompanies, getCompanyById as apiGetCompanyById, searchCompanies as apiSearchCompanies, createCompany as apiCreateCompany } from '@/lib/api/companies';
 
-// Convert the ID to string in the imported data (for fallback use)
-const localCompanies: CompanyType[] = companiesData.map(company => ({
-  ...company,
-  id: String(company.id)
-}));
+// Helper function to get company logo with fallbacks
+export const getCompanyLogo = (company: CompanyType): string => {
+  if (company.name) {
+    const companySlug = company.name.toLowerCase().replace(/\s+/g, '');
+    return `https://logo.clearbit.com/${companySlug}.com`;
+  }
+  return '/placeholder.svg';
+};
 
-/**
- * Get all companies from API
- * @returns Array of companies
- */
 export const getCompanies = async (): Promise<CompanyType[]> => {
-  try {
-    return await fetchData<CompanyType[]>('/companies');
-  } catch (error) {
-    console.error('Failed to fetch companies from API, using local data', error);
-    return localCompanies;
-  }
+  return await apiGetCompanies();
 };
 
-/**
- * Get a company by ID from API
- * @param id Company ID
- * @returns Company or undefined if not found
- */
 export const getCompanyById = async (id: string): Promise<CompanyType | undefined> => {
-  try {
-    return await fetchData<CompanyType>(`/companies/${id}`);
-  } catch (error) {
-    console.error(`Failed to fetch company ${id} from API, using local data`, error);
-    return localCompanies.find((company) => company.id === id);
-  }
+  return await apiGetCompanyById(id);
 };
 
-/**
- * Get featured companies from API
- * @param limit Number of companies to return
- * @returns Array of featured companies
- */
 export const getFeaturedCompanies = async (limit = 6): Promise<CompanyType[]> => {
-  try {
-    return await fetchData<CompanyType[]>(`/companies/featured?limit=${limit}`);
-  } catch (error) {
-    console.error('Failed to fetch featured companies from API, using local data', error);
-    return localCompanies
-      .filter((company) => company.featured)
-      .slice(0, limit);
-  }
+  const companies = await apiGetCompanies();
+  return companies.slice(0, limit);
 };
 
-/**
- * Search companies by name from API
- * @param query Search query
- * @returns Array of matching companies
- */
 export const searchCompanies = async (query: string): Promise<CompanyType[]> => {
-  if (!query || query.trim() === "") {
-    return [];
-  }
-  
-  try {
-    return await fetchData<CompanyType[]>(`/companies/search?query=${encodeURIComponent(query)}`);
-  } catch (error) {
-    console.error('Failed to search companies from API, using local data', error);
-    
-    const normalizedQuery = query.toLowerCase();
-    
-    return localCompanies.filter((company) =>
-      company.name.toLowerCase().includes(normalizedQuery) ||
-      (company.display_name && company.display_name.toLowerCase().includes(normalizedQuery)) ||
-      (company.industry && company.industry.toLowerCase().includes(normalizedQuery)) ||
-      (company.location && company.location.toLowerCase().includes(normalizedQuery))
-    );
-  }
+  return await apiSearchCompanies(query);
 };
 
-/**
- * Filter companies by industry from API
- * @param industry Industry to filter by
- * @returns Array of matching companies
- */
 export const filterCompaniesByIndustry = async (industry: string): Promise<CompanyType[]> => {
   if (!industry || industry === "all") {
     return getCompanies();
   }
   
-  try {
-    return await fetchData<CompanyType[]>(`/companies/filter/industry/${encodeURIComponent(industry)}`);
-  } catch (error) {
-    console.error('Failed to filter companies by industry from API, using local data', error);
-    
-    return localCompanies.filter(
-      (company) => company.industry.toLowerCase() === industry.toLowerCase()
-    );
-  }
+  const companies = await apiGetCompanies();
+  return companies.filter(company => company.industry === industry);
 };
 
-/**
- * Filter companies by tags from API
- * @param tags Array of tags to filter by
- * @returns Array of matching companies
- */
-export const filterCompaniesByTags = async (tags: string[]): Promise<CompanyType[]> => {
-  if (!tags || tags.length === 0) {
-    return getCompanies();
-  }
-  
-  try {
-    return await fetchData<CompanyType[]>('/companies/filter/tags', {
-      params: { tags: tags.join(',') }
-    });
-  } catch (error) {
-    console.error('Failed to filter companies by tags from API, using local data', error);
-    
-    return localCompanies.filter((company) =>
-      company.tags?.some((tag) => tags.includes(tag))
-    );
-  }
-};
-
-/**
- * Get companies with the most reviews from API
- * @param limit Number of companies to return
- * @returns Array of companies sorted by review count
- */
-export const getCompaniesWithMostReviews = async (limit = 5): Promise<CompanyType[]> => {
-  try {
-    return await fetchData<CompanyType[]>(`/companies/most-reviewed?limit=${limit}`);
-  } catch (error) {
-    console.error('Failed to fetch most reviewed companies from API, using local data', error);
-    
-    return [...localCompanies]
-      .sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0))
-      .slice(0, limit);
-  }
-};
-
-/**
- * Get companies with the highest ratings from API
- * @param limit Number of companies to return
- * @returns Array of companies sorted by rating
- */
-export const getTopRatedCompanies = async (limit = 5): Promise<CompanyType[]> => {
-  try {
-    return await fetchData<CompanyType[]>(`/companies/top-rated?limit=${limit}`);
-  } catch (error) {
-    console.error('Failed to fetch top rated companies from API, using local data', error);
-    
-    return [...localCompanies]
-      .filter((company) => company.rating !== undefined && company.rating > 0)
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, limit);
-  }
-};
-
-/**
- * Get distinct industries from all companies from API
- * @returns Array of unique industry names
- */
 export const getDistinctIndustries = async (): Promise<string[]> => {
-  try {
-    return await fetchData<string[]>('/companies/industries');
-  } catch (error) {
-    console.error('Failed to fetch industries from API, using local data', error);
-    
-    const industriesSet = new Set<string>();
-    
-    localCompanies.forEach((company) => {
-      if (company.industry) {
-        industriesSet.add(company.industry);
-      }
-    });
-    
-    return Array.from(industriesSet).sort();
-  }
+  const companies = await apiGetCompanies();
+  const industries = [...new Set(companies.map(c => c.industry).filter(Boolean))];
+  return industries;
 };
 
-/**
- * Import company from LinkedIn URL via API
- * @param linkedinUrl LinkedIn company URL
- * @returns Company data or null if not found
- */
+export const createCompany = async (company: Omit<CompanyType, 'id' | 'created_at'>): Promise<CompanyType> => {
+  return await apiCreateCompany(company);
+};
+
+// Questions
+export const getQuestions = async (): Promise<QuestionType[]> => {
+  const { getQuestions: apiGetQuestions } = await import('@/lib/api/questions');
+  return await apiGetQuestions();
+};
+
+export const getQuestionsByCategory = async (categoryId: number): Promise<QuestionType[]> => {
+  const { getQuestionsByCategory: apiGetQuestionsByCategory } = await import('@/lib/api/questions');
+  return await apiGetQuestionsByCategory(categoryId);
+};
+
+export const getDistinctCategories = async (): Promise<string[]> => {
+  const { getCategories } = await import('@/lib/api/categories');
+  const categories = await getCategories();
+  return categories.map(c => c.name);
+};
+
+// Countries and Cities
+export const getCountries = async (): Promise<CountryType[]> => {
+  const { getCountries: apiGetCountries } = await import('@/lib/api/countries');
+  return await apiGetCountries();
+};
+
+export const getCities = async (): Promise<CityType[]> => {
+  const { getCities: apiGetCities } = await import('@/lib/api/cities');
+  return await apiGetCities();
+};
+
+export const getCitiesByCountry = async (countryId: number): Promise<CityType[]> => {
+  const { getCitiesByCountry: apiGetCitiesByCountry } = await import('@/lib/api/cities');
+  return await apiGetCitiesByCountry(countryId);
+};
+
+// Roles and Departments
+export const getRoles = async (): Promise<RoleType[]> => {
+  const { getRoles: apiGetRoles } = await import('@/lib/api/roles');
+  return await apiGetRoles();
+};
+
+export const getDepartments = async (): Promise<DepartmentType[]> => {
+  const { getDepartments: apiGetDepartments } = await import('@/lib/api/departments');
+  return await apiGetDepartments();
+};
+
+// Surveys
+export const createSurvey = async (survey: Omit<SurveyType, 'id' | 'created_at'>): Promise<number> => {
+  const { createSurvey: apiCreateSurvey } = await import('@/lib/api/surveys');
+  return await apiCreateSurvey(survey);
+};
+
+export const createSurveyAnswers = async (answers: SurveyAnswerType[]) => {
+  const { createSurveyAnswers: apiCreateSurveyAnswers } = await import('@/lib/api/surveys');
+  const answersWithoutId = answers.map(({ id, created_at, ...rest }) => rest);
+  await apiCreateSurveyAnswers(answersWithoutId);
+};
+
+// LinkedIn Import - simplified for static version
 export const importCompanyFromLinkedIn = async (linkedinUrl: string): Promise<CompanyType | null> => {
   if (!linkedinUrl.includes("linkedin.com/company")) {
     return null;
   }
   
-  try {
-    return await postData<CompanyType, { url: string }>('/companies/import-linkedin', { 
-      url: linkedinUrl 
-    });
-  } catch (error) {
-    console.error('Failed to import company from LinkedIn via API, using mock data', error);
-    
-    // Extract company name/id from URL
-    const urlParts = linkedinUrl.split("/");
-    const companySlug = urlParts[urlParts.length - 1].split("?")[0];
-    
-    // For demo purposes, return a matching company if we have one
-    // or a mock company if we don't
-    const matchingCompany = localCompanies.find(
-      (c) => c.name.toLowerCase().replace(/\s+/g, "-") === companySlug
-    );
-    
-    if (matchingCompany) {
-      return matchingCompany;
-    }
-    
-    // Return a mock company with the slug as the name
-    return {
-      id: String(localCompanies.length + 1),
-      name: companySlug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
-      logo: "https://logo.clearbit.com/" + companySlug + ".com",
-      industry: "Technology",
-      location: "Unknown",
-      size: "Unknown",
-      founded: "Unknown",
-      redFlagCount: 0,
-      greenFlagCount: 0,
-      reviewCount: 0,
-      flags: []
-    };
+  // Extract company name from URL
+  const urlParts = linkedinUrl.split("/");
+  const companySlug = urlParts[urlParts.length - 1].split("?")[0];
+  
+  // Check if company already exists
+  const companies = await getCompanies();
+  const existingCompany = companies.find(c => c.linkedin_url === linkedinUrl);
+  
+  if (existingCompany) {
+    return existingCompany;
   }
+  
+  // Create new company from LinkedIn URL
+  const companyName = companySlug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  
+  const newCompany = {
+    name: companyName,
+    linkedin_url: linkedinUrl,
+    industry: "Technology", // Default industry
+    location: "Unknown",
+    website: `https://${companySlug}.com`
+  };
+  
+  return await createCompany(newCompany);
+};
+
+// Utility functions for analytics
+export const getCompaniesWithMostReviews = async (limit = 5): Promise<CompanyType[]> => {
+  const companies = await getCompanies();
+  return companies.slice(0, limit);
+};
+
+export const getTopRatedCompanies = async (limit = 5): Promise<CompanyType[]> => {
+  const companies = await getCompanies();
+  return companies.slice(0, limit);
 };

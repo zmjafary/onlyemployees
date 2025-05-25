@@ -1,13 +1,40 @@
 
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/providers/AuthProvider';
+import { logout } from '@/services/authService';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Github, HelpCircle, Home, Menu, PenSquare, Search, X } from 'lucide-react';
+import { Github, HelpCircle, Home, LogOut, Menu, PenSquare, Search, User, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Logout failed",
+        description: "There was a problem logging you out.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
@@ -49,9 +76,29 @@ export function Header() {
             <span>GitHub</span>
           </a>
           <ThemeToggle />
-          <Button asChild className="bg-primary text-white">
-            <Link href="/auth">Join Oe.</Link>
-          </Button>
+          
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2">
+                  <User size={18} />
+                  <span className="hidden lg:inline">
+                    {user?.email?.split('@')[0] || 'User'}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild className="bg-primary text-white">
+              <Link href="/auth">Join Oe.</Link>
+            </Button>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -119,11 +166,28 @@ export function Header() {
                   <Github size={20} />
                   <span>GitHub</span>
                 </a>
-                <Button asChild className="bg-primary text-white w-full mt-2" onClick={() => setIsMenuOpen(false)}>
-                  <Link href="/review">
-                    Start Reviewing
-                  </Link>
-                </Button>
+                
+                {isAuthenticated ? (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full mt-2 flex items-center gap-2"
+                  >
+                    <LogOut size={18} />
+                    Sign out
+                  </Button>
+                ) : (
+                  <Button 
+                    asChild 
+                    className="bg-primary text-white w-full mt-2" 
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Link href="/auth">Join Oe.</Link>
+                  </Button>
+                )}
               </nav>
             </motion.div>
           )}

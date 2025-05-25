@@ -2,14 +2,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { getCompanyById } from "@/services/companyService";
-import { CompanyType, StoryType } from "@/types/company";
+import { useCompany } from "@/hooks/useCompanyData";
+import { CompanyWithFlags, StoryType } from "@/types/company";
 import { motion } from "framer-motion";
 import { Building, Calendar, ExternalLink, Flag, MapPin, MessageSquare, Users, Send, Filter } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link } from '@inertiajs/react';
 import { questionsData } from "@/data/questions";
 import {
   Select,
@@ -71,54 +71,29 @@ const exampleStories: StoryType[] = [
 ];
 
 export function CompanyProfile({ companyId = "google" }: { companyId?: string }) {
-  const [company, setCompany] = useState<CompanyType | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [filters, setFilters] = useState<{ category?: string; topic?: string }>({});
   const isMobile = useIsMobile();
   const { toast } = useToast();
   
+  console.log('CompanyProfile - companyId:', companyId);
+  
   // Get distinct categories and topics for filters
-  const categories = [...new Set(questionsData.map(q => q.category))].sort();
-  const topics = [...new Set(questionsData.map(q => q.topic))].sort();
+  const categories = [...new Set(questionsData.map(q => q.category).filter(Boolean))].sort();
+  const topics = [...new Set(questionsData.map(q => q.topic).filter((t): t is string => typeof t === "string"))].sort();
 
-  useEffect(() => {
-    const fetchCompany = async () => {
-      try {
-        const companyData = await getCompanyById(companyId);
-        if (companyData) {
-          // Add example stories if none exist
-          if (!companyData.stories || companyData.stories.length === 0) {
-            companyData.stories = exampleStories;
-          }
-          setCompany(companyData);
-        } else {
-          toast({
-            title: "Company not found",
-            description: `We couldn't find information for company ID: ${companyId}`,
-            variant: "destructive",
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching company data:", error);
-        toast({
-          title: "Error loading company",
-          description: "There was a problem loading the company information.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Use the optimized hook for company data
+  const { data: company, isLoading, error } = useCompany(companyId);
 
-    fetchCompany();
-  }, [companyId, toast]);
+  console.log('CompanyProfile - company data:', company);
+  console.log('CompanyProfile - isLoading:', isLoading);
+  console.log('CompanyProfile - error:', error);
 
   // Filter stories based on selected category and topic
   const getFilteredStories = () => {
-    if (!company?.stories) return [];
+    const stories = company?.stories || exampleStories;
     
-    return company.stories.filter(story => {
+    return stories.filter(story => {
       const question = questionsData.find(q => q.id === story.questionId);
       if (!question) return false;
       
@@ -148,26 +123,39 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-20 text-center">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-32 w-32 bg-muted rounded-lg mb-4"></div>
-          <div className="h-8 w-60 bg-muted rounded mb-2"></div>
-          <div className="h-4 w-96 bg-muted rounded"></div>
+        <div className="container-custom">
+          <div className="animate-pulse flex flex-col items-center">
+            <div className="h-32 w-32 bg-muted rounded-lg mb-4"></div>
+            <div className="h-8 w-60 bg-muted rounded mb-2"></div>
+            <div className="h-4 w-96 bg-muted rounded"></div>
+          </div>
         </div>
       </div>
     );
   }
 
-  if (!company) {
+  if (error || !company) {
+    console.error('CompanyProfile - Error or no company found:', error);
     return (
       <div className="py-20 text-center">
-        <h2 className="text-2xl font-bold mb-4">Company Not Found</h2>
-        <p className="mb-6 text-muted-foreground">We couldn't find information for the requested company.</p>
-        <Button asChild>
-          <Link to="/explore">Explore Companies</Link>
-        </Button>
+        <div className="container-custom">
+          <h2 className="text-2xl font-bold mb-4">Company Not Found</h2>
+          <p className="mb-6 text-muted-foreground">
+            We couldn't find information for the requested company. 
+            {companyId && ` (ID: ${companyId})`}
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button asChild variant="outline">
+              <Link href="/">Go Home</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/explore">Explore Companies</Link>
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -189,7 +177,7 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="h-20 w-20 rounded-lg bg-white shadow-md flex items-center justify-center overflow-hidden">
               <img 
-                src={company.logo} 
+                src="/placeholder.svg"
                 alt={`${company.name} logo`}
                 className="h-full w-full object-cover"
               />
@@ -207,28 +195,22 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                   <MapPin size={16} className="text-primary" />
                   <span className="text-sm">{company.location}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Users size={16} className="text-primary" />
-                  <span className="text-sm">{company.size}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar size={16} className="text-primary" />
-                  <span className="text-sm">Founded {company.founded}</span>
-                </div>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0 w-full md:w-auto">
-              <a 
-                href={`https://linkedin.com/company/${company.id}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1.5"
-              >
-                <ExternalLink size={16} />
-                View on LinkedIn
-              </a>
+              {company.linkedin_url && (
+                <a 
+                  href={company.linkedin_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:text-primary/80 flex items-center gap-1.5"
+                >
+                  <ExternalLink size={16} />
+                  View on LinkedIn
+                </a>
+              )}
               <Button asChild>
-                <Link to={`/review?company=${company.id}`}>
+                <Link href={`/review?company=${company.id}`}>
                   <MessageSquare size={16} className="mr-2" /> Submit Review
                 </Link>
               </Button>
@@ -254,8 +236,10 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Users className="text-primary" />
-                    <span className="text-3xl font-bold">{company.reviewCount}</span>
-                    <span className="text-muted-foreground">employees</span>
+                    <span className="text-3xl font-bold">
+                      {company.surveyCount || 0}
+                    </span>
+                    <span className="text-muted-foreground">surveys</span>
                   </div>
                 </CardContent>
               </Card>
@@ -267,7 +251,7 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Flag className="text-success" />
-                    <span className="text-3xl font-bold">{company.greenFlagCount}</span>
+                    <span className="text-3xl font-bold">{company.greenFlagCount || 0}</span>
                     <span className="text-muted-foreground">positives</span>
                   </div>
                 </CardContent>
@@ -280,7 +264,7 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Flag className="text-warning" />
-                    <span className="text-3xl font-bold">{company.redFlagCount}</span>
+                    <span className="text-3xl font-bold">{company.redFlagCount || 0}</span>
                     <span className="text-muted-foreground">concerns</span>
                   </div>
                 </CardContent>
@@ -302,36 +286,40 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                 </Badge>
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {greenFlags.map((flag, index) => (
-                  <motion.div
-                    key={`green-${index}`}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="bg-success/5 border border-success/20 rounded-lg p-4"
-                  >
-                    <div className="flex justify-between mb-2">
-                      <div className="font-medium flex items-center gap-1.5">
-                        <Flag size={16} className="text-success" />
-                        {flag.text}
+              {greenFlags.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {greenFlags.map((flag, index) => (
+                    <motion.div
+                      key={flag.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className="bg-success/5 border border-success/20 rounded-lg p-4"
+                    >
+                      <div className="flex justify-between mb-2">
+                        <div className="font-medium flex items-center gap-1.5">
+                          <Flag size={16} className="text-success" />
+                          {flag.text}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {flag.votes} votes
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {flag.votes} votes
+                      <div className="w-full bg-success/10 rounded-full h-2">
+                        <div 
+                          className="bg-success h-2 rounded-full" 
+                          style={{ width: `${flag.percentage}%` }}
+                        ></div>
                       </div>
-                    </div>
-                    <div className="w-full bg-success/10 rounded-full h-2">
-                      <div 
-                        className="bg-success h-2 rounded-full" 
-                        style={{ width: `${flag.percentage}%` }}
-                      ></div>
-                    </div>
-                    <div className="mt-1 text-xs text-success">
-                      {flag.percentage}% of employees agree
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                      <div className="mt-1 text-xs text-success">
+                        {flag.percentage}% employees answered positively
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No green flags yet. Be the first to share positive feedback!</p>
+              )}
             </motion.div>
 
             {/* Red Flags */}
@@ -349,36 +337,40 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                 </Badge>
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {redFlags.map((flag, index) => (
-                  <motion.div
-                    key={`red-${index}`}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="bg-warning/5 border border-warning/20 rounded-lg p-4"
-                  >
-                    <div className="flex justify-between mb-2">
-                      <div className="font-medium flex items-center gap-1.5">
-                        <Flag size={16} className="text-warning" />
-                        {flag.text}
+              {redFlags.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {redFlags.map((flag, index) => (
+                    <motion.div
+                      key={flag.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className="bg-warning/5 border border-warning/20 rounded-lg p-4"
+                    >
+                      <div className="flex justify-between mb-2">
+                        <div className="font-medium flex items-center gap-1.5">
+                          <Flag size={16} className="text-warning" />
+                          {flag.text}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {flag.votes} votes
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {flag.votes} votes
+                      <div className="w-full bg-warning/10 rounded-full h-2">
+                        <div 
+                          className="bg-warning h-2 rounded-full" 
+                          style={{ width: `${flag.percentage}%` }}
+                        ></div>
                       </div>
-                    </div>
-                    <div className="w-full bg-warning/10 rounded-full h-2">
-                      <div 
-                        className="bg-warning h-2 rounded-full" 
-                        style={{ width: `${flag.percentage}%` }}
-                      ></div>
-                    </div>
-                    <div className="mt-1 text-xs text-warning">
-                      {flag.percentage}% of employees agree
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                      <div className="mt-1 text-xs text-warning">
+                        {flag.percentage}% employees answered negatively
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No red flags yet. Share your experience to help others!</p>
+              )}
             </motion.div>
 
             {/* CTA Section */}
@@ -391,7 +383,7 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                 All submissions are 100% anonymous.
               </p>
               <Button size={isMobile ? "default" : "lg"} asChild>
-                <Link to={`/review?company=${company.id}`}>
+                <Link href={`/review?company=${company.id}`}>
                   <Send size={16} className="mr-1" /> Submit Your Review
                 </Link>
               </Button>
@@ -431,7 +423,7 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                         <SelectContent>
                           <SelectItem value="all">All Categories</SelectItem>
                           {categories.map((cat) => (
-                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                            cat ? <SelectItem key={cat} value={cat}>{cat}</SelectItem> : null
                           ))}
                         </SelectContent>
                       </Select>
@@ -507,7 +499,7 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
               ) : (
                 <div className="bg-card border border-border rounded-lg p-8 text-center">
                   <p className="text-muted-foreground">
-                    {company.stories && company.stories.length > 0 
+                    {(company?.stories || exampleStories).length > 0 
                       ? "No stories match the selected filters." 
                       : "No stories have been shared yet."}
                   </p>
@@ -522,7 +514,7 @@ export function CompanyProfile({ companyId = "google" }: { companyId?: string })
                 Help others by anonymously sharing your experience at {company.name}.
               </p>
               <Button asChild>
-                <Link to={`/review?company=${company.id}`}>Submit Your Review</Link>
+                <Link href={`/review?company=${company.id}`}>Submit Your Review</Link>
               </Button>
             </div>
           </TabsContent>

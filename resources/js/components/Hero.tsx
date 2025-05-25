@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { AlertTriangle, Flag, MessageSquare, Search, ShieldCheck, Lock } from "lucide-react";
 import { Link } from '@inertiajs/react';
+import { motion } from "framer-motion";
+import { AlertTriangle, Flag, Lock, MessageSquare, Search, ShieldCheck } from "lucide-react";
 
 export function Hero() {
   return (

@@ -1,20 +1,37 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
-import { importCompanyFromLinkedIn, searchCompanies } from "@/services/companyService";
-import { CompanyType } from "@/types/company";
+import { useToast } from "@/hooks/use-toast";
+import { importCompanyFromLinkedIn } from "@/services/companyService";
+import { getCompaniesExtended, searchCompaniesExtended } from "@/lib/api/companiesExtended";
+import { CompanyWithFlags } from "@/types/company";
 import { motion } from "framer-motion";
 import { Building, Flag, Search } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link } from '@inertiajs/react';
 
 export function CompanySearch() {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [companies, setCompanies] = useState<CompanyType[]>([]);
+  const [companies, setCompanies] = useState<CompanyWithFlags[]>([]);
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
+
+  // Load featured companies on mount
+  useEffect(() => {
+    const loadFeaturedCompanies = async () => {
+      try {
+        const allCompanies = await getCompaniesExtended();
+        const featured = allCompanies.slice(0, 3); // Show first 3 as featured
+        setCompanies(featured);
+        setShowResults(true);
+      } catch (error) {
+        console.error("Error loading featured companies:", error);
+      }
+    };
+
+    loadFeaturedCompanies();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +54,10 @@ export function CompanySearch() {
         const company = await importCompanyFromLinkedIn(url);
 
         if (company) {
-          setCompanies([company]);
+          // Get extended data for the company
+          const allCompanies = await getCompaniesExtended();
+          const extendedCompany = allCompanies.find(c => c.id === company.id);
+          setCompanies(extendedCompany ? [extendedCompany] : []);
           toast({
             title: "Company found",
             description: `Successfully retrieved information for ${company.name}`,
@@ -45,7 +65,7 @@ export function CompanySearch() {
         } else {
           // If LinkedIn fetch failed, do a regular search with any company name in the URL
           const companyName = url.split('/').pop()?.split('?')[0] || '';
-          const searchResults = await searchCompanies(companyName);
+          const searchResults = await searchCompaniesExtended(companyName);
           setCompanies(searchResults);
 
           if (searchResults.length === 0) {
@@ -58,7 +78,7 @@ export function CompanySearch() {
         }
       } else {
         // This is a regular search term
-        const searchResults = await searchCompanies(url);
+        const searchResults = await searchCompaniesExtended(url);
         setCompanies(searchResults);
 
         if (searchResults.length === 0) {
@@ -97,7 +117,7 @@ export function CompanySearch() {
 
         <form
           onSubmit={handleSubmit}
-          className="max-w-3xl mx-auto flex flex-col md:flex-row gap-4"
+          className="max-w-3xl mx-auto flex flex-col md:flex-row gap-4 mb-8"
         >
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
@@ -128,9 +148,11 @@ export function CompanySearch() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mt-12"
+            className="mt-8"
           >
-            <h3 className="text-xl font-medium mb-4">Search Results</h3>
+            <h3 className="text-xl font-medium mb-4">
+              {url.trim() ? "Search Results" : "Featured Companies"}
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {companies.map((company, index) => {
                 // Get top flag for each type based on highest votes
@@ -152,21 +174,13 @@ export function CompanySearch() {
                   >
                     <div className="flex-1 bg-background border border-border rounded-lg p-6 hover:shadow-md transition-all duration-300 h-full flex flex-col">
                       <div className="flex items-start gap-3 mb-4">
-                        {company.logo ? (
-                          <img
-                            src={company.logo}
-                            alt={company.name}
-                            className="w-12 h-12 rounded-full object-cover border"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center border">
-                            <Building className="text-primary" size={20} />
-                          </div>
-                        )}
+                        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center border">
+                          <Building className="text-primary" size={20} />
+                        </div>
                         <div>
                           <h3 className="font-medium text-lg">{company.name}</h3>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {company.industry} • {company.size} • {company.location}
+                            {company.industry} • {company.location}
                           </p>
                         </div>
                       </div>
@@ -205,10 +219,10 @@ export function CompanySearch() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-primary border-primary hover:bg-primary/10w-full"
+                          className="text-primary border-primary hover:bg-primary/10 w-full"
                           asChild
                         >
-                          <Link to={`/company/${company.id}`}>
+                          <Link href={`/company/${company.id}`}>
                             View Insights
                           </Link>
                         </Button>
@@ -218,7 +232,7 @@ export function CompanySearch() {
                           className="w-full"
                           asChild
                         >
-                          <Link to={`/review?company=${company.id}`}>
+                          <Link href={`/review?company=${company.id}`}>
                             Share Experience
                           </Link>
                         </Button>
@@ -233,11 +247,11 @@ export function CompanySearch() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground">
-            Popular searches: <Link to="/company/google" className="text-primary hover:underline">Google</Link>,
-            <Link to="/company/microsoft" className="text-primary hover:underline"> Microsoft</Link>,
-            <Link to="/company/amazon" className="text-primary hover:underline"> Amazon</Link>,
-            <Link to="/company/facebook" className="text-primary hover:underline"> Facebook</Link>,
-            <Link to="/company/apple" className="text-primary hover:underline"> Apple</Link>
+            Popular searches: <Link href="/company/google" className="text-primary hover:underline">Google</Link>,
+            <Link href="/company/microsoft" className="text-primary hover:underline"> Microsoft</Link>,
+            <Link href="/company/amazon" className="text-primary hover:underline"> Amazon</Link>,
+            <Link href="/company/apple" className="text-primary hover:underline"> Apple</Link>,
+            <Link href="/company/meta" className="text-primary hover:underline"> Meta</Link>
           </p>
         </div>
       </div>

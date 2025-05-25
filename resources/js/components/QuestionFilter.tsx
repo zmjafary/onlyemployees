@@ -1,70 +1,164 @@
 
-import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import { getDistinctCategories, getDistinctTopics } from "@/data/questions";
+import { useEffect, useState } from "react";
 
 interface QuestionFilterProps {
-  onFilterChange: (filters: { category?: string; topic?: string }) => void;
+  selectedCategories?: string[];
+  selectedTopics?: string[];
+  onCategoryChange?: (categories: string[]) => void;
+  onTopicChange?: (topics: string[]) => void;
+  onFilterChange?: (filters: { category?: string; topic?: string }) => void;
 }
 
-export function QuestionFilter({ onFilterChange }: QuestionFilterProps) {
-  const [category, setCategory] = useState<string>("all");
-  const [topic, setTopic] = useState<string>("all");
-  
-  const categories = getDistinctCategories();
-  const topics = getDistinctTopics();
-  
-  const handleCategoryChange = (value: string) => {
-    setCategory(value);
-    onFilterChange({ category: value === "all" ? undefined : value, topic: topic === "all" ? undefined : topic });
+export function QuestionFilter({
+  selectedCategories = [],
+  selectedTopics = [],
+  onCategoryChange,
+  onTopicChange,
+  onFilterChange,
+}: QuestionFilterProps) {
+  const [categories, setCategories] = useState<string[]>([]);
+  const [topics, setTopics] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadFilters = async () => {
+      try {
+        const [categoriesData, topicsData] = await Promise.all([
+          getDistinctCategories(),
+          getDistinctTopics()
+        ]);
+        setCategories(categoriesData);
+        setTopics(topicsData);
+      } catch (error) {
+        console.error("Failed to load filter data:", error);
+      }
+    };
+
+    loadFilters();
+  }, []);
+
+  const handleCategorySelect = (category: string) => {
+    if (category === "all") {
+      onCategoryChange?.([]);
+      onFilterChange?.({ category: undefined });
+    } else if (!selectedCategories.includes(category)) {
+      const newCategories = [...selectedCategories, category];
+      onCategoryChange?.(newCategories);
+      onFilterChange?.({ category });
+    }
   };
-  
-  const handleTopicChange = (value: string) => {
-    setTopic(value);
-    onFilterChange({ category: category === "all" ? undefined : category, topic: value === "all" ? undefined : value });
+
+  const handleTopicSelect = (topic: string) => {
+    if (topic === "all") {
+      onTopicChange?.([]);
+      onFilterChange?.({ topic: undefined });
+    } else if (!selectedTopics.includes(topic)) {
+      const newTopics = [...selectedTopics, topic];
+      onTopicChange?.(newTopics);
+      onFilterChange?.({ topic });
+    }
   };
-  
+
+  const removeCategoryFilter = (category: string) => {
+    const newCategories = selectedCategories.filter(c => c !== category);
+    onCategoryChange?.(newCategories);
+  };
+
+  const removeTopicFilter = (topic: string) => {
+    const newTopics = selectedTopics.filter(t => t !== topic);
+    onTopicChange?.(newTopics);
+  };
+
+  const clearAllFilters = () => {
+    onCategoryChange?.([]);
+    onTopicChange?.([]);
+    onFilterChange?.({});
+  };
+
   return (
-    <div className="bg-card border border-border rounded-lg p-4 mb-6 shadow-sm">
-      <h3 className="font-medium mb-4">Filter Stories & Questions</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="category" className="mb-2 block">Category</Label>
-          <Select value={category} onValueChange={handleCategoryChange}>
-            <SelectTrigger id="category">
-              <SelectValue placeholder="All Categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div>
-          <Label htmlFor="topic" className="mb-2 block">Topic</Label>
-          <Select value={topic} onValueChange={handleTopicChange}>
-            <SelectTrigger id="topic">
-              <SelectValue placeholder="All Topics" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Topics</SelectItem>
-              {topics.map((t) => (
-                <SelectItem key={t} value={t}>{t}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+    <div className="space-y-4 p-4 bg-card rounded-lg border">
+      <h3 className="font-semibold text-lg">Filter Questions</h3>
+      
+      {/* Category Filter */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Filter by Category:</label>
+        <Select onValueChange={handleCategorySelect}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((category) => (
+              <SelectItem key={category} value={category}>
+                {category}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
+      {/* Topic Filter */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Filter by Topic:</label>
+        <Select onValueChange={handleTopicSelect}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a topic" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Topics</SelectItem>
+            {topics.map((topic) => (
+              <SelectItem key={topic} value={topic}>
+                {topic}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Active Filters */}
+      {(selectedCategories.length > 0 || selectedTopics.length > 0) && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Active Filters:</span>
+            <Button variant="ghost" size="sm" onClick={clearAllFilters}>
+              Clear All
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {selectedCategories.map((category) => (
+              <Badge key={category} variant="secondary" className="cursor-pointer">
+                {category}
+                <button
+                  onClick={() => removeCategoryFilter(category)}
+                  className="ml-1 text-xs hover:text-destructive"
+                >
+                  ×
+                </button>
+              </Badge>
+            ))}
+            {selectedTopics.map((topic) => (
+              <Badge key={topic} variant="outline" className="cursor-pointer">
+                {topic}
+                <button
+                  onClick={() => removeTopicFilter(topic)}
+                  className="ml-1 text-xs hover:text-destructive"
+                >
+                  ×
+                </button>
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

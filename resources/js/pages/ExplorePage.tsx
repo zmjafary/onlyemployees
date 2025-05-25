@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -10,23 +11,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  getCompanies,
   importCompanyFromLinkedIn
 } from "@/services/companyService";
-import { CompanyType } from "@/types/company";
+import { getCompaniesExtended } from "@/lib/api/companiesExtended";
+import { CompanyWithFlags } from "@/types/company";
 import { motion } from "framer-motion";
 import { Search, Linkedin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from '@inertiajs/react';
 import { BriefcaseIcon, MapPinIcon } from "lucide-react";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
-  const [size, setSize] = useState("");
   const [industry, setIndustry] = useState("");
   const [location, setLocation] = useState("");
-  const [companies, setCompanies] = useState<CompanyType[]>([]);
-  const [filteredCompanies, setFilteredCompanies] = useState<CompanyType[]>([]);
+  const [companies, setCompanies] = useState<CompanyWithFlags[]>([]);
+  const [filteredCompanies, setFilteredCompanies] = useState<CompanyWithFlags[]>([]);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [isImporting, setIsImporting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +37,7 @@ export default function ExplorePage() {
     // Fetch companies on component mount
     const fetchCompanies = async () => {
       try {
-        const companiesData = await getCompanies();
+        const companiesData = await getCompaniesExtended();
         setCompanies(companiesData);
         setFilteredCompanies(companiesData);
       } catch (error) {
@@ -60,28 +61,8 @@ export default function ExplorePage() {
     
     if (query) {
       results = results.filter(company => 
-        company.name.toLowerCase().includes(query.toLowerCase()) ||
-        company.description?.toLowerCase().includes(query.toLowerCase())
+        company.name.toLowerCase().includes(query.toLowerCase())
       );
-    }
-    
-    if (size && size !== "all") {
-      results = results.filter(company => {
-        // Safely access size property
-        const companySize = company.size || '';
-        const employeeCount = parseInt(companySize.replace(/,/g, '').split('+')[0]);
-        
-        switch(size) {
-          case "small":
-            return employeeCount < 500;
-          case "medium":
-            return employeeCount >= 500 && employeeCount <= 10000;
-          case "large":
-            return employeeCount > 10000;
-          default:
-            return true;
-        }
-      });
     }
     
     if (industry && industry !== "all") {
@@ -119,11 +100,10 @@ export default function ExplorePage() {
     }
     
     setFilteredCompanies(results);
-  }, [query, size, industry, location, companies]);
+  }, [query, industry, location, companies]);
 
   const resetFilters = () => {
     setQuery("");
-    setSize("");
     setIndustry("");
     setLocation("");
   };
@@ -160,7 +140,7 @@ export default function ExplorePage() {
         });
         
         // Refresh companies list
-        const updatedCompanies = await getCompanies();
+        const updatedCompanies = await getCompaniesExtended();
         setCompanies(updatedCompanies);
         setFilteredCompanies(updatedCompanies);
         setLinkedinUrl("");
@@ -187,6 +167,7 @@ export default function ExplorePage() {
     <div>
       <section className="py-16 md:py-24 bg-background">
         <div className="container-custom">
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -202,8 +183,9 @@ export default function ExplorePage() {
             </p>
           </motion.div>
 
+          
           <div className="bg-background rounded-xl p-6 border border-border mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
               <div>
                 <Label htmlFor="search">Search Company</Label>
                 <div className="relative">
@@ -217,21 +199,6 @@ export default function ExplorePage() {
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
                 </div>
-              </div>
-
-              <div>
-                <Label htmlFor="size">Company Size</Label>
-                <Select value={size} onValueChange={setSize}>
-                  <SelectTrigger id="size">
-                    <SelectValue placeholder="All Sizes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Sizes</SelectItem>
-                    <SelectItem value="small">Small (&lt; 500)</SelectItem>
-                    <SelectItem value="medium">Medium (500-10,000)</SelectItem>
-                    <SelectItem value="large">Large (&gt; 10,000)</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <div>
@@ -280,6 +247,7 @@ export default function ExplorePage() {
             </div>
           </div>
 
+          
           <div className="bg-background rounded-xl p-6 border border-border mb-10">
             <h2 className="text-xl font-semibold mb-4">Import Company from LinkedIn</h2>
             <div className="flex flex-col md:flex-row gap-4">
@@ -320,30 +288,18 @@ export default function ExplorePage() {
                 >
                   <div className="relative h-48 bg-gradient-to-br from-primary/20 to-background">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <img
-                        src={company.logoUrl || company.logo || "/placeholder.svg"}
-                        alt={company.name}
-                        className="h-16 w-16 object-contain"
-                      />
-                    </div>
-                    {company.featured && (
-                      <div className="absolute top-3 right-3 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-full">
-                        Featured
+                      <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center">
+                        <span className="text-2xl font-bold text-primary">
+                          {company.name.charAt(0)}
+                        </span>
                       </div>
-                    )}
+                    </div>
                   </div>
                   
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="font-semibold text-xl">{company.name}</h3>
-                      <div className="bg-accent/50 text-xs rounded-full px-2 py-1">
-                        {company.size}
-                      </div>
                     </div>
-                    
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                      {company.description || "No description available."}
-                    </p>
                     
                     <div className="flex items-center justify-between text-sm mb-4">
                       <span className="text-muted-foreground flex items-center gap-1">
@@ -356,27 +312,30 @@ export default function ExplorePage() {
                       </span>
                     </div>
                     
-                    <div className="flex flex-wrap gap-2 mb-5">
-                      {company.tags && company.tags.slice(0, 3).map((tag, index) => (
-                          <div 
-                            key={index}
-                          className="bg-accent/30 rounded-full px-2 py-1 text-xs"
-                          >
-                            {tag}
-                          </div>
-                        ))}
-                      </div>
-                    
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1">
-                        <div className="text-success text-lg font-semibold">
-                          {company.rating || 
-                           (company.greenFlagCount && company.redFlagCount ? 
-                            (company.greenFlagCount / (company.greenFlagCount + company.redFlagCount) * 5).toFixed(1) 
-                            : 0)} / 5
+                        <div className="flex items-center gap-1">
+                          {company.greenFlagCount && company.redFlagCount ? (
+                            company.greenFlagCount > company.redFlagCount ? (
+                              <ThumbsUp
+                                className="mr-1 sm:mr-2 text-green-600 dark:text-green-500 group-hover:scale-110 transition-transform duration-200"
+                                size={20}
+                              />
+                            ) : (
+                              <ThumbsDown
+                                className="mr-1 sm:mr-2 text-red-600 dark:text-red-500 group-hover:scale-110 transition-transform duration-200"
+                                size={20}
+                              />
+                            )
+                          ) : (
+                            <ThumbsUp
+                              className="mr-1 sm:mr-2 text-green-600 dark:text-green-500 group-hover:scale-110 transition-transform duration-200"
+                              size={20}
+                            />
+                          )}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          ({company.reviews || company.reviewCount || 0} reviews)
+                          ({company.surveyCount || 0} reviews)
                         </div>
                       </div>
                       

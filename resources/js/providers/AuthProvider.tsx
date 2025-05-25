@@ -1,48 +1,53 @@
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { isAuthenticated as checkAuth } from '@/services/authService';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+}
 
 interface AuthContextType {
+  user: User | null;
   isAuthenticated: boolean;
-  setAuthenticated: (value: boolean) => void;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    // Check if the user is authenticated on mount
-    const checkAuthentication = async () => {
-      const authenticated = checkAuth();
-      setIsAuthenticated(authenticated);
-      setIsLoading(false);
-    };
-
-    checkAuthentication();
-  }, []);
-
-  const setAuthenticated = (value: boolean) => {
-    setIsAuthenticated(value);
+  const login = async (email: string, password: string) => {
+    // Simulate login - in real app this would call Laravel API
+    setUser({
+      id: '1',
+      email,
+      name: email.split('@')[0]
+    });
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const logout = async () => {
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setAuthenticated }}>
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: !!user,
+      login,
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = (): AuthContextType => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
